@@ -27,7 +27,7 @@ describe('workspace git', () => {
   it('init --example copies the example workspace', () => {
     const home = join(tmp(), 'Taskpack');
     initWorkspace({ home, lang: 'en', exampleDir: exampleDir('en') });
-    expect(existsSync(join(home, 'projects', 'display-cabinet', 'project.md'))).toBe(true);
+    expect(existsSync(join(home, 'projects', 'proof-app', 'project.md'))).toBe(true);
     expect(validateWorkspace(home).ok).toBe(true);
     expect(git(home, 'status', '--porcelain')).toBe('');
   });
@@ -36,8 +36,8 @@ describe('workspace git', () => {
     const home = join(tmp(), 'Taskpack');
     initWorkspace({ home, lang: 'en', exampleDir: exampleDir('en') });
     const ctx = ctxFor(home);
-    addTodos(ctx, { project: 'display-cabinet', text: 'Order glass' });
-    const r = logSession(ctx, { project: 'display-cabinet', summary: 'Ordered the glass.\nMore detail.' });
+    addTodos(ctx, { project: 'proof-app', text: 'Order glass' });
+    const r = logSession(ctx, { project: 'proof-app', summary: 'Ordered the glass.\nMore detail.' });
     expect(r.commit).toBeDefined();
     expect(git(home, 'log', '-1', '--format=%s')).toBe('Ordered the glass.');
     expect(git(home, 'log', '-1', '--format=%b')).toContain('Taskpack-Actor: claude-code');
@@ -50,7 +50,7 @@ describe('workspace git', () => {
     initWorkspace({ home, lang: 'en', exampleDir: exampleDir('en') });
     const yaml = join(home, 'taskpack.yaml');
     writeFileSync(yaml, readFileSync(yaml, 'utf8').replace('autocommit: session', 'autocommit: off'));
-    expect(logSession(ctxFor(home), { project: 'home', summary: 'S.' }).commit).toBeUndefined();
+    expect(logSession(ctxFor(home), { project: 'japan-trip', summary: 'S.' }).commit).toBeUndefined();
 
     // A workspace folder inside another repository (e.g. the app repo) is never committed.
     const outer = tmp();
@@ -58,7 +58,7 @@ describe('workspace git', () => {
     const nested = join(outer, 'ws');
     cpSync(exampleDir('en'), nested, { recursive: true });
     expect(isWorkspaceRepo(nested)).toBe(false);
-    expect(logSession(ctxFor(nested), { project: 'home', summary: 'S.' }).commit).toBeUndefined();
+    expect(logSession(ctxFor(nested), { project: 'japan-trip', summary: 'S.' }).commit).toBeUndefined();
     expect(() => git(outer, 'rev-parse', 'HEAD')).toThrow();
   });
 });

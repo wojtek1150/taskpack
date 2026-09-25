@@ -1,7 +1,7 @@
 ---
 name: taskpack-session
 description: Start and wrap-up ritual for a Taskpack working session. Use when starting work on a taskpack:// project, or to wrap up, podsumuj sesję, zakończ, notatka sesji.
-when_to_use: 'Start: "pracujemy nad taskpack://x", "let''s work on the cabinet", "zacznijmy", "co dalej w projekcie". End: "wrap up", "podsumuj sesję", "kończymy", "that''s it for today", "zapisz sesję", or before the conversation ends after project files changed.'
+when_to_use: 'Start: "pracujemy nad taskpack://x", "let''s work on the app launch", "zacznijmy", "co dalej w projekcie". End: "wrap up", "podsumuj sesję", "kończymy", "that''s it for today", "zapisz sesję", or before the conversation ends after project files changed.'
 ---
 
 # Taskpack session ritual
@@ -37,7 +37,7 @@ Do this when the user says so, when the work is done, or before the conversation
 3. **Update the Summary** when the state changed (`set_summary` / `taskpack summary set <slug> --now … --blocker … --next …`). Now = what is being worked on; Blocker = what stops progress (empty it when resolved); Next = the next milestone.
 4. **Write the session note** once per project changed:
    - MCP `log_session {"project": "<slug>", "summary": "…"}`, CLI `taskpack session log <slug> --summary "…"`;
-   - the change list is derived from the activity log; add `changes` only for what the log cannot know ("zamówiono szkło u szklarza");
+   - the change list is derived from the activity log; add `changes` only for what the log cannot know ("zadzwoniono do sklepu w sprawie stelaża");
    - by hand only when there is no CLI/MCP: `projects/<slug>/sessions/YYYY-MM-DD-<actor>.md` (see the format reference).
 5. **Tell the user** in 2–3 lines what was recorded and what the next step is.
 
@@ -45,4 +45,4 @@ Do this when the user says so, when the work is done, or before the conversation
 
 2–5 sentences: what was done, what was decided and why, what is next or blocked. No lists of every edit (the change chips cover that), no greetings.
 
-> Wyfrezowaliśmy wpust w prawych drzwiczkach; ustawienie z lewych pasowało bez zmian. Zdecydowaliśmy listwy przytrzymujące na kołeczkach zamiast silikonu, żeby szybę dało się wymienić. Następny krok: listwy z odpadu dębu; szkło trzeba jeszcze zamówić.
+> Przywracanie zakupów działa na dwóch telefonach z kontem testowym. Zdecydowaliśmy, że paywall pojawia się dopiero po trzecim wypieku, żeby nie straszyć przy pierwszym uruchomieniu. Następny krok: teksty na paywallu; zgłoszenie wciąż czeka na umowę Paid Apps.

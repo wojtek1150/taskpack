@@ -1,5 +1,6 @@
 export * from './activity.js';
 export * from './edit/doc.js';
+export * from './example.js';
 export * from './format/index.js';
 export * from './git.js';
 export * from './ids.js';

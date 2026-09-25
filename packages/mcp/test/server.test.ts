@@ -15,21 +15,31 @@ const outputOf = (name: string) => {
 /** Each tool: a valid call (structuredContent must match the output schema) and a failing one. */
 const CASES: { name: string; ok: Record<string, unknown>; bad: Record<string, unknown>; badText: RegExp }[] = [
   { name: 'list_projects', ok: {}, bad: { kind: 'boat' }, badText: /kind/ },
-  { name: 'get_project', ok: { project: 'taskpack://witrynka' }, bad: { project: 'nie-ma' }, badText: /not found/ },
-  { name: 'get_task', ok: { task: 'witrynka/drzwiczki' }, bad: { task: 'witrynka' }, badText: /not a task reference/ },
-  { name: 'get_images', ok: { project: 'witrynka' }, bad: { project: 'nie-ma' }, badText: /not found/ },
+  {
+    name: 'get_project',
+    ok: { project: 'taskpack://premiera-proof' },
+    bad: { project: 'nie-ma' },
+    badText: /not found/,
+  },
+  {
+    name: 'get_task',
+    ok: { task: 'premiera-proof/zakup-w-aplikacji' },
+    bad: { task: 'premiera-proof' },
+    badText: /not a task reference/,
+  },
+  { name: 'get_images', ok: { project: 'premiera-proof' }, bad: { project: 'nie-ma' }, badText: /not found/ },
   { name: 'search', ok: { query: 'szkło' }, bad: { query: '' }, badText: /query/ },
   {
     name: 'add_todo',
-    ok: { project: 'witrynka', text: 'Kupić kołki' },
-    bad: { project: 'witrynka' },
+    ok: { project: 'premiera-proof', text: 'Kupić kołki' },
+    bad: { project: 'premiera-proof' },
     badText: /text or items/,
   },
   { name: 'toggle_todo', ok: { todo_id: 'td_w1gl', done: true }, bad: { todo_id: 'td_zzzz' }, badText: /not found/ },
   {
     name: 'create_task',
-    ok: { project: 'witrynka', title: 'Zawiasy', steps: ['Wybrać model'] },
-    bad: { project: 'witrynka', title: 'x', weight: 9 },
+    ok: { project: 'premiera-proof', title: 'Zawiasy', steps: ['Wybrać model'] },
+    bad: { project: 'premiera-proof', title: 'x', weight: 9 },
     badText: /weight/,
   },
   {
@@ -40,39 +50,43 @@ const CASES: { name: string; ok: Record<string, unknown>; bad: Record<string, un
   },
   {
     name: 'update_task',
-    ok: { task: 'taskpack://witrynka/drzwiczki', check_steps: ['st_d2pw'], decision: 'Listwy na kołeczkach.' },
-    bad: { task: 'witrynka/drzwiczki', check_steps: ['st_nope'] },
+    ok: {
+      task: 'taskpack://premiera-proof/zakup-w-aplikacji',
+      check_steps: ['st_d2pw'],
+      decision: 'Listwy na kołeczkach.',
+    },
+    bad: { task: 'premiera-proof/zakup-w-aplikacji', check_steps: ['st_nope'] },
     badText: /step "st_nope" not found/,
   },
   {
     name: 'set_summary',
-    ok: { project: 'witrynka', now: 'Drzwiczki' },
+    ok: { project: 'premiera-proof', now: 'Drzwiczki' },
     bad: { project: 'nie-ma' },
     badText: /not found/,
   },
   {
     name: 'log_session',
-    ok: { project: 'witrynka', summary: 'Wpust gotowy.' },
-    bad: { project: 'witrynka', summary: '' },
+    ok: { project: 'premiera-proof', summary: 'Wpust gotowy.' },
+    bad: { project: 'premiera-proof', summary: '' },
     badText: /summary/,
   },
   {
     name: 'attach_image',
     ok: {
-      project: 'witrynka',
+      project: 'premiera-proof',
       title: 'Szkic zawiasu',
       category: 'drawing',
       source: {
         svg: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle cx="20" cy="20" r="10"/></svg>',
       },
     },
-    bad: { project: 'witrynka', title: 'x', category: 'drawing', source: { url: 'http://example.com/a.png' } },
+    bad: { project: 'premiera-proof', title: 'x', category: 'drawing', source: { url: 'http://example.com/a.png' } },
     badText: /only https/,
   },
   {
     name: 'ask_user',
-    ok: { project: 'witrynka', question: 'Olej czy wosk?', options: ['Olej', 'Wosk'] },
-    bad: { project: 'witrynka', question: 'x', options: ['1', '2', '3', '4', '5'] },
+    ok: { project: 'premiera-proof', question: 'Olej czy wosk?', options: ['Olej', 'Wosk'] },
+    bad: { project: 'premiera-proof', question: 'x', options: ['1', '2', '3', '4', '5'] },
     badText: /options/,
   },
 ];
@@ -110,13 +124,13 @@ describe('taskpack-mcp tools', () => {
 
   it('writes as the actor inferred from clientInfo, or the explicit one', async () => {
     const home = tempWorkspace('pl');
-    await call(await connect({ home }), 'add_todo', { project: 'witrynka', text: 'Od Claude Code' });
-    await call(await connect({ home }, 'Cursor'), 'add_todo', { project: 'witrynka', text: 'Od Cursora' });
+    await call(await connect({ home }), 'add_todo', { project: 'premiera-proof', text: 'Od Claude Code' });
+    await call(await connect({ home }, 'Cursor'), 'add_todo', { project: 'premiera-proof', text: 'Od Cursora' });
     await call(await connect({ home, actor: 'codex' }, 'whatever'), 'add_todo', {
-      project: 'witrynka',
+      project: 'premiera-proof',
       text: 'Od Codexa',
     });
-    const todos = read(home, 'projects/witrynka/todos.md');
+    const todos = read(home, 'projects/premiera-proof/todos.md');
     expect(todos).toMatch(/Od Claude Code <!-- id:td_\w+ by:claude-code /);
     expect(todos).toMatch(/Od Cursora <!-- id:td_\w+ by:cursor /);
     expect(todos).toMatch(/Od Codexa <!-- id:td_\w+ by:codex /);
@@ -125,21 +139,21 @@ describe('taskpack-mcp tools', () => {
   it('replays a repeated request_id instead of writing twice', async () => {
     const home = tempWorkspace('pl');
     const client = await connect({ home });
-    const args = { project: 'witrynka', items: ['Kołki 8 mm', 'Klej'], request_id: 'req-1' };
+    const args = { project: 'premiera-proof', items: ['Kołki 8 mm', 'Klej'], request_id: 'req-1' };
     const first = await call(client, 'add_todo', args);
     const second = await call(client, 'add_todo', args);
     expect(second.structuredContent).toEqual({ ...first.structuredContent, duplicate: true });
-    expect(read(home, 'projects/witrynka/todos.md').match(/Kołki 8 mm/g)).toHaveLength(1);
+    expect(read(home, 'projects/premiera-proof/todos.md').match(/Kołki 8 mm/g)).toHaveLength(1);
   });
 
   it('marks answers delivered once get_project has returned them', async () => {
     const home = tempWorkspace('pl');
     answerQuestion({ home, actor: 'user' }, { question_id: 'q_7h2k', answer: 'Tak, wyślij.' });
     const client = await connect({ home });
-    const first = await call(client, 'get_project', { project: 'finanse' });
+    const first = await call(client, 'get_project', { project: 'biurko' });
     expect(first.structuredContent?.answers).toEqual([expect.objectContaining({ id: 'q_7h2k' })]);
     expect(read(home, 'questions.md')).toMatch(/id:q_7h2k .*status:delivered/);
-    const second = await call(client, 'get_project', { project: 'finanse' });
+    const second = await call(client, 'get_project', { project: 'biurko' });
     expect(second.structuredContent?.answers).toEqual([]);
     // Bookkeeping only: it does not become a session change.
     expect(readActivity(home).filter((e) => e.op === 'question.delivered')).toHaveLength(1);
@@ -150,13 +164,13 @@ describe('taskpack-mcp tools', () => {
     const task = /task:(\S+)/.exec(read(home, 'questions.md'))?.[1] ?? '';
     answerQuestion({ home, actor: 'user' }, { question_id: 'q_7h2k', answer: 'Tak, wyślij.' });
     const client = await connect({ home });
-    const first = await call(client, 'get_task', { task: `finanse/${task}` });
+    const first = await call(client, 'get_task', { task: `biurko/${task}` });
     expect(first.structuredContent?.answers).toEqual([
       expect.objectContaining({ id: 'q_7h2k', answer: 'Tak, wyślij.' }),
     ]);
     expect(text(first)).toContain('Tak, wyślij.');
     expect(read(home, 'questions.md')).toMatch(/id:q_7h2k .*status:delivered/);
-    const second = await call(client, 'get_task', { task: `finanse/${task}` });
+    const second = await call(client, 'get_task', { task: `biurko/${task}` });
     expect(second.structuredContent?.answers).toEqual([]);
   });
 
@@ -164,8 +178,8 @@ describe('taskpack-mcp tools', () => {
     const home = tempWorkspace('pl');
     const client = await connect({ home });
     const since = new Date(Date.now() - 1000).toISOString();
-    await call(client, 'add_todo', { project: 'witrynka', text: 'Nowe' });
-    const changes = await call(client, 'get_project', { project: 'witrynka', since });
+    await call(client, 'add_todo', { project: 'premiera-proof', text: 'Nowe' });
+    const changes = await call(client, 'get_project', { project: 'premiera-proof', since });
     expect(changes.structuredContent?.changes).toEqual([
       expect.objectContaining({ op: 'todo.add', actor: 'claude-code' }),
     ]);
@@ -188,7 +202,7 @@ describe('tool filtering from taskpack.yaml', () => {
     expect(names).not.toContain('search');
     expect(names).not.toContain('set_summary');
     // A hidden tool is refused by the SDK itself.
-    await expect(call(chatgpt, 'set_summary', { project: 'witrynka', now: 'x' })).rejects.toThrow(/disabled/);
+    await expect(call(chatgpt, 'set_summary', { project: 'premiera-proof', now: 'x' })).rejects.toThrow(/disabled/);
 
     const claude = await connect({ home, actor: 'claude-code' });
     const claudeNames = (await claude.listTools()).tools.map((t) => t.name);
@@ -211,24 +225,24 @@ describe('resources and prompts', () => {
     const client = await connect({ home: tempWorkspace('pl') });
     const { resources } = await client.listResources();
     const uris = resources.map((r) => r.uri);
-    expect(uris).toContain('taskpack://witrynka');
-    expect(uris).toContain('taskpack://witrynka/drzwiczki');
+    expect(uris).toContain('taskpack://premiera-proof');
+    expect(uris).toContain('taskpack://premiera-proof/zakup-w-aplikacji');
 
-    const project = await client.readResource({ uri: 'taskpack://witrynka' });
+    const project = await client.readResource({ uri: 'taskpack://premiera-proof' });
     expect(project.contents[0]).toMatchObject({ mimeType: 'text/markdown' });
-    expect(JSON.stringify(project.contents[0])).toContain('# Witrynka (taskpack://witrynka)');
-    const task = await client.readResource({ uri: 'taskpack://witrynka/drzwiczki' });
-    expect(JSON.stringify(task.contents[0])).toContain('(taskpack://witrynka/drzwiczki)');
+    expect(JSON.stringify(project.contents[0])).toContain('# Premiera Proof (taskpack://premiera-proof)');
+    const task = await client.readResource({ uri: 'taskpack://premiera-proof/zakup-w-aplikacji' });
+    expect(JSON.stringify(task.contents[0])).toContain('(taskpack://premiera-proof/zakup-w-aplikacji)');
   });
 
   it('start_session and wrap_up prompts in the workspace language', async () => {
     const client = await connect({ home: tempWorkspace('pl') });
     const { prompts } = await client.listPrompts();
     expect(prompts.map((p) => p.name).sort()).toEqual(['start_session', 'wrap_up']);
-    const start = await client.getPrompt({ name: 'start_session', arguments: { project: 'witrynka' } });
-    expect(JSON.stringify(start.messages)).toContain('Pracujemy nad taskpack://witrynka');
+    const start = await client.getPrompt({ name: 'start_session', arguments: { project: 'premiera-proof' } });
+    expect(JSON.stringify(start.messages)).toContain('Pracujemy nad taskpack://premiera-proof');
     const en = await connect({ home: tempWorkspace('en') });
-    const wrap = await en.getPrompt({ name: 'wrap_up', arguments: { project: 'display-cabinet' } });
+    const wrap = await en.getPrompt({ name: 'wrap_up', arguments: { project: 'proof-app' } });
     expect(JSON.stringify(wrap.messages)).toContain('log_session');
   });
 });

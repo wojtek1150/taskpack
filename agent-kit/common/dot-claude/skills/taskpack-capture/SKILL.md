@@ -26,16 +26,16 @@ Do not record chit-chat, things already done in this conversation that have no f
 ## 2. Deduplicate before writing
 
 1. Load the pack if you have not (`get_project`), and read open todos, open tasks and their steps.
-2. For each candidate, look for the same intent in other words ("zamówić szkło" = "kupić szybę hartowaną"). If you are not sure, `search` / `taskpack search <word>`.
+2. For each candidate, look for the same intent in other words ("zgłosić build do TestFlight" = "wysłać wersję testerom"). If you are not sure, `search` / `taskpack search <word>`.
 3. Same intent already there → do not add. If the new information refines it (quantity, size, date), add a note or a step to the existing task instead, or tell the user.
 4. Several todos in one project → one `add_todo` with `items` (max 20).
 
 ## 3. Write good items
 
-- Start with a verb, be specific: "Zamówić szkło hartowane 4 mm — 2 szt. 62 × 46 cm", not "szkło".
+- Start with a verb, be specific: "Wysłać build 1.0 (14) do zewnętrznej grupy w TestFlight", not "TestFlight".
 - Keep numbers, sizes, names and links the user gave.
 - One action per todo.
-- Task title: the outcome ("Drzwiczki — wpust pod szybę"); steps: concrete actions in order, 2–8 of them.
+- Task title: the outcome ("Paywall — jednorazowy zakup"); steps: concrete actions in order, 2–8 of them.
 
 ## 4. Weight, status, due
 

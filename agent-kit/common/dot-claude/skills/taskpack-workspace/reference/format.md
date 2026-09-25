@@ -18,11 +18,11 @@ A Taskpack workspace is a folder of plain Markdown and YAML files. The files are
 
 ### 1.1 Slugs
 
-Project folders and task files are named by a **slug**, which is also their id (`taskpack://witrynka/drzwiczki`).
+Project folders and task files are named by a **slug**, which is also their id (`taskpack://premiera-proof/zakup-w-aplikacji`).
 
 - Pattern `^[a-z0-9]+(?:-[a-z0-9]+)*$`, at most 64 characters.
 - Derived from the name: lowercase, Polish diacritics transliterated (`ą→a ć→c ę→e ł→l ń→n ó→o ś→s ź→z ż→z`, other accents stripped, `×→x`), every other run of characters becomes one `-`.
-  `Drzwiczki — wpust pod szybę` → `drzwiczki-wpust-pod-szybe`. Short slugs are fine (`drzwiczki`).
+  `Półka pod monitor — wysokość` → `polka-pod-monitor-wysokosc`. Short slugs are fine (`blat`).
 - Renaming a project or task does not require renaming the file; the title lives in frontmatter.
 
 ### 1.2 Actors
@@ -44,7 +44,7 @@ Who created or changed something. Used in `by:` metadata, `created_by`, `author`
 Todos, steps, notes, decisions and questions carry metadata in a trailing HTML comment, invisible in rendered Markdown:
 
 ```markdown
-- [ ] Zamówić szkło hartowane 4 mm <!-- id:td_w1gl by:claude at:2026-09-22T21:32:00+02:00 -->
+- [ ] Wysłać build 1.0 (14) do zewnętrznej grupy w TestFlight <!-- id:td_w1gl by:claude at:2026-09-22T21:32:00+02:00 -->
 ```
 
 - Format: `<!-- key:value key:value -->` at the end of the line; values contain no spaces.
@@ -60,11 +60,11 @@ Tasks have `weight` 1–5 = **impact × urgency**, rounded to the scale:
 
 | Weight | Meaning | Example |
 |---|---|---|
-| 5 | Blocks other work or has a hard deadline this week | Carcass glue-up everything else depends on |
-| 4 | Important and soon; blocks a milestone | Door rebate — blocks assembly |
-| 3 | Important, not urgent (or urgent, low impact) | Compare insurance offers before the renewal |
-| 2 | Nice to do soon | Book a car inspection |
-| 1 | Someday / low stakes | Pick a code highlighting theme |
+| 5 | Blocks other work or has a hard deadline this week | Timer engine everything else depends on |
+| 4 | Important and soon; blocks a milestone | Paywall — blocks the App Store submission |
+| 3 | Important, not urgent (or urgent, low impact) | Acoustic panels before the next recording |
+| 2 | Nice to do soon | Buy travel insurance |
+| 1 | Someday / low stakes | Pick a font for the email template |
 
 The board sorts each column by weight, descending, unless the user reordered cards (`order`).
 
@@ -149,14 +149,14 @@ Optional `# Inbox` title, then a GFM checklist in the same format as `todos.md` 
 Questions an agent asks the user (MCP `ask_user`), shown in the UI focus strip. Optional `# Questions` title, then one `##` section per question; the heading **is** the question.
 
 ```markdown
-## Send a reminder about the headphones refund?
-<!-- id:q_7h2k by:claude at:2026-09-23T09:15:00+02:00 project:finances task:headphones-refund status:open -->
+## Send the shop a reminder about the desk frame?
+<!-- id:q_7h2k by:claude at:2026-09-23T09:15:00+02:00 project:studio-desk task:desk-frame status:open -->
 
 Context paragraph for the user.
 
 ### Options
 - Yes, send it
-- I will reply myself
+- I will call them myself
 
 ### Answer
 ```
@@ -171,9 +171,9 @@ Context paragraph for the user.
 
 ```markdown
 ---
-name: Witrynka               # required, ≤ 200 chars
-kind: physical               # required: physical | digital | life
-kind_label: stolarka         # free label shown next to kind, ≤ 40
+name: Premiera Proof         # required, ≤ 200 chars
+kind: digital                # required: physical | digital | life
+kind_label: aplikacja iOS    # free label shown next to kind, ≤ 40
 color: "#C2410C"             # accent, #RRGGBB
 cover_color: "#7C2D12"       # card cover background
 monogram: "</>"              # ≤ 4 chars on the card cover
@@ -210,8 +210,8 @@ Quick items without status or weight (tasks are the bigger things). Optional `# 
 ```markdown
 # Todo
 
-- [ ] Zamówić szkło hartowane 4 mm — 2 szt. 62 × 46 cm <!-- id:td_w1gl by:claude at:2026-09-22T21:32:00+02:00 -->
-- [x] Naostrzyć dłuta <!-- id:td_w6dl by:user at:2026-09-15 done:2026-09-20 -->
+- [ ] Wysłać build 1.0 (14) do zewnętrznej grupy w TestFlight <!-- id:td_w1gl by:claude at:2026-09-22T21:32:00+02:00 -->
+- [x] Założyć adres mailowy do wsparcia <!-- id:td_w6dl by:user at:2026-09-15 done:2026-09-20 -->
 - [ ] Item without metadata is fine
 ```
 
@@ -221,13 +221,13 @@ Quick items without status or weight (tasks are the bigger things). Optional `# 
 
 ```markdown
 ---
-title: Drzwiczki — wpust pod szybę   # required, ≤ 200
+title: Paywall — jednorazowy zakup   # required, ≤ 200
 status: in_progress                  # inbox (default) | todo | in_progress | waiting | done | canceled
 weight: 4                            # 1–5, default 3 (§1.4)
 due: 2026-09-28                      # date
 estimate: "~4 h"                     # free text, ≤ 40
 order: 1                             # board order within the column: number or fractional-index string
-blocked_note: blokuje montaż         # what it blocks / waits for, shown next to the status
+blocked_note: blokuje zgłoszenie     # what it blocks / waits for, shown next to the status
 created: 2026-09-14                  # date or timestamp
 created_by: user                     # actor
 done_at: 2026-09-19                  # date or timestamp, set when status becomes done
@@ -239,8 +239,8 @@ What and why. (Text before the first `##` is also read as the description.)
 
 ## Kroki
 
-- [x] Wyfrezować wpust — lewe drzwiczki <!-- id:st_d1lw done:2026-09-21 -->
-- [ ] Wyfrezować wpust — prawe drzwiczki <!-- id:st_d2pw -->
+- [x] Produkt w StoreKit i zakup w sandboksie <!-- id:st_d1lw done:2026-09-21 -->
+- [ ] Przywracanie zakupów <!-- id:st_d2pw -->
 
 ## Notatki
 
@@ -248,7 +248,7 @@ What and why. (Text before the first `##` is also read as the description.)
 
 ## Decyzje
 
-- Szkło hartowane 4 mm, nie 3 mm. <!-- by:claude at:2026-09-22T21:40:00+02:00 -->
+- Jednorazowy zakup za 12,99 €, bez subskrypcji. <!-- by:claude at:2026-09-22T21:40:00+02:00 -->
 ```
 
 - All sections are optional; order is free. The first unticked step is the task's **next step**.
@@ -268,7 +268,7 @@ ended: 2026-09-22T21:40:00+02:00           # timestamp
 via: mcp                                   # mcp | cli | files | ui
 changes:                                   # short change list shown as chips
   - +2 todo
-  - "przypięto: Wymiary"
+  - "przypięto: Ścieżka zakupu"
   - podsumowanie zaktualizowane
 ---
 
@@ -281,10 +281,10 @@ Session summary in the workspace language (required, non-empty; the context pack
 
 ```markdown
 ---
-title: Sęk na lewym boku     # optional
+title: Uwagi z TestFlight    # optional
 author: user                 # required actor
 created: 2026-09-20          # required, date or timestamp
-task: korpus                 # optional task slug the note belongs to
+task: minutniki              # optional task slug the note belongs to
 ---
 
 Note body (required, non-empty).
@@ -294,14 +294,14 @@ Note body (required, non-empty).
 
 ```yaml
 images:
-  - file: render-front.svg        # required, plain file name inside images/, must exist
-    title: Render — front         # required, ≤ 200
+  - file: ekran-glowny.svg        # required, plain file name inside images/, must exist
+    title: Ekran główny           # required, ≤ 200
     category: visualization       # required: visualization | drawing | inspiration | progress | other
-    caption: Widok z przodu …     # what an agent should know about the picture, ≤ 1000
+    caption: Makieta hi-fi: …     # what an agent should know about the picture, ≤ 1000
     pinned: true                  # "current" image, sent to agents in the context pack
     pinned_order: 1               # optional: position among the pinned images (1 = the big tile)
     order: 1                      # number or fractional-index string
-    tasks: [drzwiczki]            # task slugs the image is attached to (the only place this link is stored)
+    tasks: [zakup-w-aplikacji]    # task slugs the image is attached to (the only place this link is stored)
     created_by: claude            # optional actor who added the image (UI: "from Claude")
     created: 2026-09-22T21:40:00+02:00   # optional, when it was added
 ```
@@ -326,7 +326,7 @@ Image variants are named by the SHA-256 of the original file, so a renamed file 
 
 `activity.jsonl` has one JSON object per change made through Taskpack (CLI, MCP, UI):
 `{ ts, actor, op, project?, entity?, summary, count?, request_id?, result? }`, e.g.
-`{"ts":"2026-09-24T10:12:00+02:00","actor":"claude-code","op":"todo.add","project":"witrynka","entity":"td_k3m9","summary":"+1 todo","count":1}`.
+`{"ts":"2026-09-24T10:12:00+02:00","actor":"claude-code","op":"todo.add","project":"premiera-proof","entity":"td_k3m9","summary":"+1 todo","count":1}`.
 Ops: `project.create`, `project.edit`, `project.archive`, `project.unarchive`, `todo.add`, `todo.done`, `todo.undone`, `task.create`, `task.status`, `task.edit`, `step.add`, `step.check`, `step.uncheck`, `task.note`, `task.decision`, `summary.set`, `question.ask`, `question.answer`, `question.delivered`, `session.log`, `config.lang`, `image.add`, `image.pin`, `image.unpin`, `image.edit`, `image.reorder`, `note.add`, `session.undo`, `file.edit` (a file an agent edited directly, recorded by the Claude Code after-edit hook; a hand-written session note is recorded as `session.log`). `question.delivered` is bookkeeping and never becomes a session change.
 It feeds the session change list (writes of one actor in one project less than 2 h apart, since its last `session.log`), `taskpack pack --since` and request-id deduplication (same actor + `request_id` within 24 h returns the stored `result`). Deleting it loses only that history; the workspace files stay complete.
 
@@ -337,11 +337,11 @@ When Taskpack writes a file it changes only the lines of the edit, plus the meta
 `taskpack init` makes the workspace a git repository (`.taskpack/` is ignored). With `git.autocommit: session` (default), writing a session note commits the whole workspace: `log_session` / `taskpack session log`, and a session note an agent writes by hand in Claude Code (the after-edit hook). The commit's subject is the summary's first line and its trailers say who and what:
 
 ```
-Wpust gotowy, szkło zamówione.
+Przywracanie zakupów działa, teksty na paywallu gotowe.
 
 Taskpack-Actor: claude
-Taskpack-Project: witrynka
-Taskpack-Session: projects/witrynka/sessions/2026-09-22-claude.md
+Taskpack-Project: premiera-proof
+Taskpack-Session: projects/premiera-proof/sessions/2026-09-22-claude.md
 ```
 
 **Undoing a session** (the "Undo" button on a session in the app, `taskpack session undo <note | project>`) finds the commits whose `Taskpack-Session` trailer names the note (for older sessions, the Taskpack autocommit that added the note), reverts them with `git revert --no-commit`, restores the note with `undone: <timestamp>` and commits once more with the trailer `Taskpack-Undo: <note>`. History is never rewritten or reset, so the undo itself can be reverted with git. The undo is refused, with nothing changed, when:
@@ -366,14 +366,14 @@ A small, complete Polish workspace. The full versions are in `examples/workspace
 ├─ taskpack.yaml
 ├─ inbox.md
 ├─ questions.md
-└─ projects/witrynka/
+└─ projects/premiera-proof/
    ├─ project.md
    ├─ todos.md
-   ├─ tasks/drzwiczki.md
-   ├─ tasks/korpus.md
+   ├─ tasks/zakup-w-aplikacji.md
+   ├─ tasks/minutniki.md
    ├─ sessions/2026-09-22-claude.md
-   ├─ notes/2026-09-20-sek.md
-   └─ images/{images.yaml, wymiary.svg, detal-wpust.svg}
+   ├─ notes/2026-09-20-uwagi-z-testflight.md
+   └─ images/{images.yaml, paywall.svg, sciezka-zakupu.svg}
 ```
 
 `taskpack.yaml`
@@ -394,8 +394,8 @@ clients:
 ```markdown
 # Inbox
 
-- [ ] Oddzwonić do hydraulika <!-- id:td_i1hy by:user at:2026-09-23T08:10:00+02:00 -->
-- [ ] Kupić baterie AA
+- [ ] Odpisać na zaproszenie do podcastu <!-- id:td_i1hy by:user at:2026-09-23T08:10:00+02:00 -->
+- [ ] Kupić mąkę żytnią do zakwasu
 ```
 
 `questions.md`
@@ -403,86 +403,86 @@ clients:
 ```markdown
 # Pytania
 
-## Zawiasy nakładane czy wpuszczane?
-<!-- id:q_3m9p by:claude at:2026-09-22T21:35:00+02:00 project:witrynka status:delivered -->
+## Jednorazowy zakup czy subskrypcja?
+<!-- id:q_3m9p by:claude at:2026-09-22T21:35:00+02:00 project:premiera-proof status:delivered -->
 
-Do drzwi w ramie 20 mm pasują oba typy. Nakładane są prostsze w montażu.
+StoreKit 2 obsłuży jedno i drugie. Do minutnika offline lepiej pasuje jednorazowy zakup.
 
 ### Opcje
-- Nakładane
-- Wpuszczane
+- Jednorazowy zakup
+- Subskrypcja
 
 ### Odpowiedź
 
-Nakładane, w kolorze mosiądzu.
+Jednorazowo, 12,99 €.
 ```
 
-`projects/witrynka/project.md`
+`projects/premiera-proof/project.md`
 
 ```markdown
 ---
-name: Witrynka
-kind: physical
-kind_label: stolarka
+name: Premiera Proof
+kind: digital
+kind_label: aplikacja iOS
 color: "#C2410C"
 target: 2026-10-31
 target_label: koniec października
 ---
-Dębowa witryna 180 × 80 × 38 cm na nóżkach. Dwoje drzwi przeszklonych, 3 półki z regulacją, wykończenie olejem woskowym.
+Proof to mała aplikacja na iOS dla domowych piekarzy: pilnuje dokarmiania zakwasu, fermentacji i ostatniego rośnięcia. Wersja 1.0 to jednorazowy zakup, bez konta i bez serwera.
 
 ## Podsumowanie
 <!-- by:claude at:2026-09-22T21:40:00+02:00 -->
 
-Korpus sklejony i wyszlifowany. Lewe drzwiczki mają wpust, prawe czekają. Szkło jeszcze niezamówione — to blokuje montaż.
+Minutniki i powiadomienia działają i są w TestFlight. Paywall przechodzi zakup w sandboksie; zostało przywracanie zakupów i teksty.
 
-- **Teraz:** Wpust w prawych drzwiczkach, listwy przytrzymujące szybę
-- **Bloker:** Szkło 4 mm — wymiar potwierdzony, trzeba zamówić (realizacja ~5 dni)
-- **Potem:** Półki, olejowanie, montaż zawiasów
+- **Teraz:** Przywracanie zakupów, teksty na paywallu
+- **Bloker:** Umowa Paid Apps — Apple weryfikuje dane konta bankowego
+- **Potem:** Ekrany powitalne, karta w App Store, zgłoszenie 1.0 do recenzji
 ```
 
-`projects/witrynka/todos.md`
+`projects/premiera-proof/todos.md`
 
 ```markdown
 # Todo
 
-- [ ] Zamówić szkło hartowane 4 mm — 2 szt. 62 × 46 cm <!-- id:td_w1gl by:claude at:2026-09-22T21:32:00+02:00 -->
-- [ ] Papier ścierny 180 / 240 <!-- id:td_w4pa by:user at:2026-09-18 -->
-- [x] Naostrzyć dłuta <!-- id:td_w6dl by:user at:2026-09-15 done:2026-09-20 -->
+- [ ] Wysłać build 1.0 (14) do zewnętrznej grupy w TestFlight <!-- id:td_w1gl by:claude at:2026-09-22T21:32:00+02:00 -->
+- [ ] Przejrzeć polskie tłumaczenie <!-- id:td_w4pa by:user at:2026-09-18 -->
+- [x] Założyć adres mailowy do wsparcia <!-- id:td_w6dl by:user at:2026-09-15 done:2026-09-20 -->
 ```
 
-`projects/witrynka/tasks/drzwiczki.md`
+`projects/premiera-proof/tasks/zakup-w-aplikacji.md`
 
 ```markdown
 ---
-title: Drzwiczki — wpust pod szybę
+title: Paywall — jednorazowy zakup
 status: in_progress
 weight: 4
 due: 2026-09-28
 estimate: "~4 h"
-blocked_note: blokuje montaż
+blocked_note: blokuje zgłoszenie do App Store
 created_by: user
 ---
 
 ## Opis
 
-Wpust 6 × 10 mm od wewnętrznej strony ramiaka. Szyba trzymana listwami, bez silikonu.
+Jeden produkt niekonsumowalny odblokowuje dowolną liczbę zakwasów i dziennik wypieków. StoreKit 2, bez serwera.
 
 ## Kroki
 
-- [x] Wyfrezować wpust — lewe drzwiczki <!-- id:st_d1lw done:2026-09-21 -->
-- [ ] Wyfrezować wpust — prawe drzwiczki <!-- id:st_d2pw -->
-- [ ] Listwy przytrzymujące z odpadu dębu <!-- id:st_d3ls -->
+- [x] Produkt w StoreKit i zakup w sandboksie <!-- id:st_d1lw done:2026-09-21 -->
+- [ ] Przywracanie zakupów <!-- id:st_d2pw -->
+- [ ] Teksty na paywallu i stan „Może później” <!-- id:st_d3ls -->
 
 ## Decyzje
 
-- Szkło hartowane 4 mm, nie 3 mm. <!-- by:claude at:2026-09-22T21:40:00+02:00 -->
+- Jednorazowy zakup za 12,99 €, bez subskrypcji. <!-- by:claude at:2026-09-22T21:40:00+02:00 -->
 ```
 
-`projects/witrynka/tasks/korpus.md`
+`projects/premiera-proof/tasks/minutniki.md`
 
 ```markdown
 ---
-title: Korpus — klejenie i szlifowanie
+title: Silnik minutników i powiadomienia
 status: done
 weight: 5
 done_at: 2026-09-19
@@ -490,11 +490,11 @@ done_at: 2026-09-19
 
 ## Kroki
 
-- [x] Sklejenie korpusu <!-- id:st_k3kl done:2026-09-17 -->
-- [x] Szlif 120 → 180 <!-- id:st_k4sz done:2026-09-19 -->
+- [x] Model minutnika z zapisanym czasem startu <!-- id:st_k1pr done:2026-09-14 -->
+- [x] Testy zmiany strefy czasowej i czasu letniego <!-- id:st_k4sz done:2026-09-19 -->
 ```
 
-`projects/witrynka/sessions/2026-09-22-claude.md`
+`projects/premiera-proof/sessions/2026-09-22-claude.md`
 
 ```markdown
 ---
@@ -504,43 +504,43 @@ ended: 2026-09-22T21:40:00+02:00
 via: mcp
 changes:
   - +2 todo
-  - "przypięto: Wymiary"
+  - "przypięto: Ścieżka zakupu"
   - podsumowanie zaktualizowane
 ---
 
-Policzyliśmy szybę po odjęciu wpustu: **2 szt. 62 × 46 cm**. Decyzja: hartowane 4 mm zamiast 3 mm.
+Przeszliśmy przypadki brzegowe zakupu: przerwany zakup, Ask to Buy, zwroty. Decyzja: **jednorazowy zakup za 12,99 €**, bez subskrypcji.
 ```
 
-`projects/witrynka/notes/2026-09-20-sek.md`
+`projects/premiera-proof/notes/2026-09-20-uwagi-z-testflight.md`
 
 ```markdown
 ---
 author: user
 created: 2026-09-20
-task: korpus
+task: minutniki
 ---
 
-Lewy bok ma sęk na wysokości ~40 cm — obrócić deskę sękiem do tyłu, będzie za półką.
+Dwie osoby przegapiły powiadomienie „czas dokarmić”, bo schował je tryb skupienia — oznaczyć jako pilne.
 ```
 
-`projects/witrynka/images/images.yaml`
+`projects/premiera-proof/images/images.yaml`
 
 ```yaml
 images:
-  - file: wymiary.svg
-    title: Wymiary 180 × 80 × 38
-    category: drawing
-    caption: Wymiary zewnętrzne w cm; podział drzwi w połowie szerokości.
+  - file: paywall.svg
+    title: Paywall
+    category: visualization
+    caption: "Ekran jednorazowego zakupu: trzy korzyści, cena, „Przywróć zakupy” i „Może później”."
     pinned: true
     order: 1
-    tasks: [drzwiczki]
-  - file: detal-wpust.svg
-    title: "Detal: wpust 6 × 10"
+    tasks: [zakup-w-aplikacji]
+  - file: sciezka-zakupu.svg
+    title: Ścieżka zakupu
     category: drawing
-    caption: Przekrój ramiaka z wpustem 6 × 10 mm od wewnątrz.
+    caption: "Stany StoreKit 2: pobranie produktów, zakup, oczekiwanie (Ask to Buy), odblokowane, przywracanie."
     pinned: true
     order: 2
-    tasks: [drzwiczki]
+    tasks: [zakup-w-aplikacji]
 ```
 
 The same workspace in English uses `## Summary`, `**Now:**`, `## Description`, `## Steps`, `## Decisions`, `### Options`, `### Answer`, with identical keys and enum values.

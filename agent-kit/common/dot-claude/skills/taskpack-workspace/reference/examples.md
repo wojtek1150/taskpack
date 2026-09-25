@@ -5,37 +5,37 @@ Each example shows the CLI call, the MCP call and the equivalent hand edit. Pref
 ## Add a todo
 
 ```sh
-taskpack --actor claude-code todo add witrynka "Kupić kołki 8 mm"
+taskpack --actor claude-code todo add premiera-proof "Sprawdzić przywracanie na drugim telefonie"
 ```
 
-MCP: `add_todo {"project": "witrynka", "text": "Kupić kołki 8 mm"}`
+MCP: `add_todo {"project": "premiera-proof", "text": "Sprawdzić przywracanie na drugim telefonie"}`
 
-By hand, in `projects/witrynka/todos.md`, after the last open item:
+By hand, in `projects/premiera-proof/todos.md`, after the last open item:
 
 ```diff
- - [ ] Papier ścierny 180 / 240 <!-- id:td_w4pa by:user at:2026-09-18 -->
-+- [ ] Kupić kołki 8 mm <!-- by:claude-code at:2026-09-24 -->
- - [x] Odebrać deski dębowe z tartaku <!-- id:td_w5de by:user at:2026-09-08 done:2026-09-12 -->
+ - [ ] Przejrzeć polskie tłumaczenie <!-- id:td_w4pa by:user at:2026-09-18 -->
++- [ ] Sprawdzić przywracanie na drugim telefonie <!-- by:claude-code at:2026-09-24 -->
+ - [x] Opłacić Apple Developer Program <!-- id:td_w5de by:user at:2026-09-08 done:2026-09-12 -->
 ```
 
 ## Tick a todo or a step
 
 ```sh
 taskpack --actor claude-code todo done td_w1gl
-taskpack --actor claude-code task update witrynka/drzwiczki --check st_d2pw   # or --check 2
+taskpack --actor claude-code task update premiera-proof/zakup-w-aplikacji --check st_d2pw   # or --check 2
 ```
 
 By hand: change `[ ]` to `[x]` and add `done:<date>` inside the existing comment. Do not touch other text on the line.
 
 ```diff
--- [ ] Wyfrezować wpust — prawe drzwiczki <!-- id:st_d2pw -->
-+- [x] Wyfrezować wpust — prawe drzwiczki <!-- id:st_d2pw done:2026-09-24 -->
+-- [ ] Przywracanie zakupów <!-- id:st_d2pw -->
++- [x] Przywracanie zakupów <!-- id:st_d2pw done:2026-09-24 -->
 ```
 
 ## Change a task status
 
 ```sh
-taskpack --actor claude-code task update witrynka/drzwiczki --status waiting
+taskpack --actor claude-code task update premiera-proof/zakup-w-aplikacji --status waiting
 ```
 
 By hand: change only the `status:` line of the frontmatter. For `done` also add `done_at: <timestamp>`.
@@ -43,7 +43,7 @@ By hand: change only the `status:` line of the frontmatter. For `done` also add 
 ## Record a decision or a note
 
 ```sh
-taskpack --actor claude-code task update witrynka/drzwiczki --decision "Listwy na kołeczkach, bez silikonu."
+taskpack --actor claude-code task update premiera-proof/zakup-w-aplikacji --decision "Paywall dopiero po trzecim wypieku."
 ```
 
 By hand: append a bullet at the end of `## Decyzje` (`## Decisions`); create the section after Notes if it is missing.
@@ -51,21 +51,21 @@ By hand: append a bullet at the end of `## Decyzje` (`## Decisions`); create the
 ```markdown
 ## Decyzje
 
-- Szkło hartowane 4 mm, nie 3 mm. <!-- by:claude at:2026-09-22T21:40:00+02:00 -->
-- Listwy na kołeczkach, bez silikonu. <!-- by:claude-code at:2026-09-24 -->
+- Jednorazowy zakup za 12,99 €, bez subskrypcji. <!-- by:claude at:2026-09-22T21:40:00+02:00 -->
+- Paywall dopiero po trzecim wypieku. <!-- by:claude-code at:2026-09-24 -->
 ```
 
 ## Create a task
 
 ```sh
-taskpack --actor claude-code task create witrynka "Montaż zawiasów" -w 3 --due 2026-10-05 -s "Wybrać zawiasy" -s "Nawiercić puszki 35 mm"
+taskpack --actor claude-code task create premiera-proof "Zgłoszenie do recenzji" -w 3 --due 2026-10-05 -s "Archiwum w Xcode" -s "Notatki dla recenzenta"
 ```
 
-By hand: a new file `projects/witrynka/tasks/montaz-zawiasow.md` (slug: lowercase ASCII, `-` between words):
+By hand: a new file `projects/premiera-proof/tasks/zgloszenie-do-recenzji.md` (slug: lowercase ASCII, `-` between words):
 
 ```markdown
 ---
-title: Montaż zawiasów
+title: Zgłoszenie do recenzji
 status: todo
 weight: 3
 due: 2026-10-05
@@ -75,14 +75,14 @@ created_by: claude-code
 
 ## Kroki
 
-- [ ] Wybrać zawiasy <!-- by:claude-code at:2026-09-24 -->
-- [ ] Nawiercić puszki 35 mm <!-- by:claude-code at:2026-09-24 -->
+- [ ] Archiwum w Xcode <!-- by:claude-code at:2026-09-24 -->
+- [ ] Notatki dla recenzenta <!-- by:claude-code at:2026-09-24 -->
 ```
 
 ## Update the summary
 
 ```sh
-taskpack --actor claude-code summary set witrynka --now "Prawe drzwiczki: wpust" --blocker "" --next "Listwy przytrzymujące"
+taskpack --actor claude-code summary set premiera-proof --now "Teksty na paywallu" --blocker "" --next "Ekrany powitalne"
 ```
 
 `""` removes a line; omitted parts stay as they are.
@@ -90,7 +90,7 @@ taskpack --actor claude-code summary set witrynka --now "Prawe drzwiczki: wpust"
 ## Ask the user
 
 ```sh
-taskpack --actor claude-code question ask witrynka "Olej czy wosk na blat?" -o Olej -o Wosk
+taskpack --actor claude-code question ask premiera-proof "Paywall po trzecim czy po piątym wypieku?" -o "Po trzecim" -o "Po piątym"
 ```
 
 The answer comes back in a later pack under "answers to your questions".

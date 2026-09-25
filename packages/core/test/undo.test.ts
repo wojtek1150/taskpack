@@ -29,7 +29,7 @@ function workspace(lang: 'pl' | 'en' = 'en'): string {
 }
 
 /** An agent session: a todo, a task, a step and a note, then log_session (autocommit). */
-function agentSession(home: string, project = 'display-cabinet', task = 'doors') {
+function agentSession(home: string, project = 'proof-app', task = 'paywall') {
   const ctx = ctxFor(home, 'claude-code');
   const added = addTodos(ctx, { project, items: ['Order hinges', 'Buy wax'] });
   createTask(ctx, { project, title: 'Fit the glass', weight: 4, steps: ['Measure', 'Cut'] });
@@ -53,14 +53,14 @@ describe('undoSession', () => {
 
     const info = sessionUndoInfo(home, session.file);
     expect(info.available).toBe(true);
-    expect(info.files.map((f) => f.path)).toContain('projects/display-cabinet/todos.md');
+    expect(info.files.map((f) => f.path)).toContain('projects/proof-app/todos.md');
     expect(info.dirty).toEqual([]);
 
     const result = undoSession(ctxFor(home, 'user'), { session: session.file });
     const after = snapshot(home);
     expect(changedFiles(before, after)).toEqual([session.file]);
     expect(after.get(session.file)).toMatch(/^undone: \d{4}-\d{2}-\d{2}T/m);
-    expect(result.files).toContain('projects/display-cabinet/tasks/fit-the-glass.md');
+    expect(result.files).toContain('projects/proof-app/tasks/fit-the-glass.md');
     expect(validateWorkspace(home).issues).toEqual([]);
 
     // History is kept: the session commit is still there, the undo is a new commit.
@@ -70,7 +70,7 @@ describe('undoSession', () => {
     ]);
     expect(git(home, 'log', '-1', '--format=%(trailers:key=Taskpack-Undo,valueonly)')).toBe(session.file);
     expect(git(home, 'status', '--porcelain')).toBe('');
-    expect(readActivity(home).at(-1)).toMatchObject({ op: 'session.undo', actor: 'user', project: 'display-cabinet' });
+    expect(readActivity(home).at(-1)).toMatchObject({ op: 'session.undo', actor: 'user', project: 'proof-app' });
 
     // A second undo is refused.
     expect(sessionUndoInfo(home, session.file)).toMatchObject({ available: false, reason: 'undone' });
@@ -82,7 +82,7 @@ describe('undoSession', () => {
     const { session } = agentSession(home);
     const short = session.file.replace(/^projects\//, '').replace(/\.md$/, '');
     expect(sessionUndoInfo(home, `taskpack://${short}`).session).toBe(session.file);
-    expect(sessionUndoInfo(home, 'display-cabinet').session).toBe(session.file);
+    expect(sessionUndoInfo(home, 'proof-app').session).toBe(session.file);
   });
 
   it('refuses uncommitted changes unless asked to commit them first', () => {
@@ -110,7 +110,7 @@ describe('undoSession', () => {
 
   it('aborts cleanly on a conflict with later changes (Polish message)', () => {
     const home = workspace('pl');
-    const { added, session } = agentSession(home, 'witrynka', 'drzwiczki');
+    const { added, session } = agentSession(home, 'premiera-proof', 'zakup-w-aplikacji');
     // The user ticks a todo the agent added and commits it: the same line changed later.
     const id = added.added[0]?.id ?? '';
     toggleTodo(ctxFor(home, 'user'), { todo_id: id, done: true });
@@ -124,7 +124,7 @@ describe('undoSession', () => {
     expect(changedFiles(before, snapshot(home))).toEqual([]);
     expect(
       loadWorkspace(home)
-        .projects.find((p) => p.slug === 'witrynka')
+        .projects.find((p) => p.slug === 'premiera-proof')
         ?.sessions.some((s) => s.frontmatter.undone),
     ).toBe(false);
   });
@@ -132,14 +132,14 @@ describe('undoSession', () => {
   it('explains why undo is unavailable', () => {
     const home = join(mkdtempSync(join(tmpdir(), 'taskpack-undo-')), 'Taskpack');
     initWorkspace({ home, lang: 'en', exampleDir: exampleDir('en'), git: false });
-    const s = logSession(ctxFor(home), { project: 'display-cabinet', summary: 'No git here.' });
+    const s = logSession(ctxFor(home), { project: 'proof-app', summary: 'No git here.' });
     expect(sessionUndoInfo(home, s.file)).toMatchObject({ available: false, reason: 'not_repo' });
 
     const home2 = workspace();
     const yaml = join(home2, 'taskpack.yaml');
     writeFileSync(yaml, readFileSync(yaml, 'utf8').replace('autocommit: session', 'autocommit: off'));
-    const s2 = logSession(ctxFor(home2), { project: 'display-cabinet', summary: 'No commit.' });
+    const s2 = logSession(ctxFor(home2), { project: 'proof-app', summary: 'No commit.' });
     expect(sessionUndoInfo(home2, s2.file)).toMatchObject({ available: false, reason: 'autocommit_off' });
-    expect(() => sessionUndoInfo(home2, 'display-cabinet/sessions/nope')).toThrow(/not found/);
+    expect(() => sessionUndoInfo(home2, 'proof-app/sessions/nope')).toThrow(/not found/);
   });
 });

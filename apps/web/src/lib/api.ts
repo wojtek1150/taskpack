@@ -155,6 +155,14 @@ export function uploadImage(
   if (fields.pin) form.append('pin', 'true');
   for (const task of fields.tasks ?? []) form.append('tasks', task);
   form.append('file', file, name);
+  // The demo build's in-browser backend answers fetch (no upload progress there).
+  if (__TASKPACK_DEMO__) {
+    return fetch(`/api/projects/${seg(project)}/images`, { method: 'POST', body: form }).then(async (res) => {
+      const data = (await res.json()) as ImageAdded & { error?: { code: string; message: string } };
+      if (!res.ok) throw new ApiError(res.status, data.error?.code ?? 'http', data.error?.message ?? res.statusText);
+      return data;
+    });
+  }
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `/api/projects/${seg(project)}/images`);

@@ -23,9 +23,9 @@ import {
 import { ctxFor, lineDiff, NAMES, read, tempWorkspace } from './helpers.js';
 
 const n = NAMES.pl;
-const yamlRel = `projects/${n.cabinet}/images/images.yaml`;
+const yamlRel = `projects/${n.app}/images/images.yaml`;
 
-const images = (home: string) => loadWorkspace(home).projects.find((p) => p.slug === n.cabinet)?.images ?? [];
+const images = (home: string) => loadWorkspace(home).projects.find((p) => p.slug === n.app)?.images ?? [];
 
 async function png(width = 64, height = 48): Promise<Buffer> {
   return sharp({ create: { width, height, channels: 3, background: '#c2410c' } })
@@ -87,12 +87,12 @@ describe('image type sniffing', () => {
   });
 
   it('parses image references', () => {
-    expect(parseImageRef('taskpack://witrynka/images/render-front.svg')).toEqual({
-      project: 'witrynka',
-      file: 'render-front.svg',
+    expect(parseImageRef('taskpack://premiera-proof/images/ekran-glowny.svg')).toEqual({
+      project: 'premiera-proof',
+      file: 'ekran-glowny.svg',
     });
-    expect(parseImageRef('witrynka/a.jpg')).toEqual({ project: 'witrynka', file: 'a.jpg' });
-    expect(() => parseImageRef('witrynka/images/../x')).toThrow(/invalid image reference/);
+    expect(parseImageRef('premiera-proof/a.jpg')).toEqual({ project: 'premiera-proof', file: 'a.jpg' });
+    expect(() => parseImageRef('premiera-proof/images/../x')).toThrow(/invalid image reference/);
   });
 });
 
@@ -102,21 +102,21 @@ describe('addImage', () => {
     const before = read(home, yamlRel);
     const data = await png();
     const result = await addImage(ctxFor(home, 'claude'), {
-      project: n.cabinet,
+      project: n.app,
       data,
       name: 'Zdjęcie Szuflady.PNG',
       category: 'progress',
       caption: 'Szuflada  po klejeniu',
-      tasks: [`${n.cabinet}/${n.doors}`],
+      tasks: [`${n.app}/${n.paywall}`],
     });
     expect(result).toMatchObject({
       file: 'zdjecie-szuflady.png',
-      ref: `taskpack://${n.cabinet}/images/zdjecie-szuflady.png`,
+      ref: `taskpack://${n.app}/images/zdjecie-szuflady.png`,
       title: 'Zdjęcie Szuflady',
       pinned: false,
       type: 'png',
     });
-    expect(readFileSync(join(home, 'projects', n.cabinet, 'images', result.file))).toEqual(data);
+    expect(readFileSync(join(home, 'projects', n.app, 'images', result.file))).toEqual(data);
 
     const after = read(home, yamlRel);
     expect(after.startsWith(before.replace(/\n$/, ''))).toBe(true);
@@ -127,15 +127,15 @@ describe('addImage', () => {
       category: 'progress',
       caption: 'Szuflada po klejeniu',
       pinned: false,
-      order: 25,
-      tasks: [n.doors],
+      order: 8,
+      tasks: [n.paywall],
       created_by: 'claude',
     });
     expect(readActivity(home).map((e) => [e.op, e.actor, e.summary])).toEqual([
       ['image.add', 'claude', 'dodano obraz: Zdjęcie Szuflady'],
     ]);
     // Variants were prepared.
-    const sha = imageSha(join(home, 'projects', n.cabinet, 'images', result.file));
+    const sha = imageSha(join(home, 'projects', n.app, 'images', result.file));
     expect(existsSync(variantPath(home, 'thumb', sha))).toBe(true);
     expect(existsSync(variantPath(home, 'agent', sha))).toBe(true);
     expect(validateWorkspace(home).issues.filter((i) => i.severity === 'error')).toEqual([]);
@@ -145,11 +145,11 @@ describe('addImage', () => {
     const home = tempWorkspace('pl');
     const src = join(home, 'wymiary.png');
     writeFileSync(src, await png());
-    const a = await addImage(ctxFor(home), { project: n.cabinet, source_path: src, title: 'Wymiary PNG' });
-    const b = await addImage(ctxFor(home), { project: n.cabinet, source_path: src, title: 'Wymiary PNG' });
+    const a = await addImage(ctxFor(home), { project: n.app, source_path: src, title: 'Wymiary PNG' });
+    const b = await addImage(ctxFor(home), { project: n.app, source_path: src, title: 'Wymiary PNG' });
     expect([a.file, b.file]).toEqual(['wymiary.png', 'wymiary-2.png']);
 
-    const project = 'dom';
+    const project = 'japonia';
     const first = loadWorkspace(home).projects.find((p) => p.images.length === 0);
     const slug = first?.slug ?? project;
     const r = await addImage(ctxFor(home), { project: slug, data: await png(), name: 'x.png', pin: true });
@@ -161,26 +161,26 @@ describe('addImage', () => {
   it('rejects unknown types, oversized files and a sixth pin', async () => {
     const home = tempWorkspace('pl');
     await expectError(
-      () => addImage(ctxFor(home), { project: n.cabinet, data: Buffer.from('plain text'), name: 'a.txt' }),
+      () => addImage(ctxFor(home), { project: n.app, data: Buffer.from('plain text'), name: 'a.txt' }),
       /Nieobsługiwany typ pliku/,
     );
     await expectError(
-      () => addImage(ctxFor(home), { project: n.cabinet, data: Buffer.alloc(26 * 1024 * 1024, 1), name: 'big.png' }),
+      () => addImage(ctxFor(home), { project: n.app, data: Buffer.alloc(26 * 1024 * 1024, 1), name: 'big.png' }),
       /za duży/,
     );
     await expectError(
-      () => addImage(ctxFor(home), { project: n.cabinet, data: Buffer.from('x'), name: 'a.png', tasks: ['nope'] }),
+      () => addImage(ctxFor(home), { project: n.app, data: Buffer.from('x'), name: 'a.png', tasks: ['nope'] }),
       /Nieobsługiwany/,
     );
     const data = await png();
-    await expectError(() => addImage(ctxFor(home), { project: n.cabinet, data, pin: true }), /najwyżej 5/);
-    await expectError(() => addImage(ctxFor(home), { project: n.cabinet, data, tasks: ['nie-ma'] }), /not found/);
-    expect(images(home)).toHaveLength(24);
+    await expectError(() => addImage(ctxFor(home), { project: n.app, data, pin: true }), /najwyżej 5/);
+    await expectError(() => addImage(ctxFor(home), { project: n.app, data, tasks: ['nie-ma'] }), /not found/);
+    expect(images(home)).toHaveLength(7);
   });
 
   it('stores a PDF with a placeholder preview and a warning', async () => {
     const home = tempWorkspace('en');
-    const project = NAMES.en.cabinet;
+    const project = NAMES.en.app;
     const pdf = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
     const r = await addImage(ctxFor(home), { project, data: pdf, name: 'invoice.pdf', title: 'Invoice' });
     expect(r.file).toBe('invoice.pdf');
@@ -204,9 +204,9 @@ describe('variants', () => {
     expect(meta.orientation).toBe(6);
     expect(meta.exif).toBeDefined();
 
-    const r = await addImage(ctxFor(home), { project: n.cabinet, data: photo, name: 'warsztat.jpg' });
+    const r = await addImage(ctxFor(home), { project: n.app, data: photo, name: 'warsztat.jpg' });
     const image = { file: r.file, title: r.title, category: 'progress' as const };
-    const agent = await ensureVariant(home, n.cabinet, image, 'agent');
+    const agent = await ensureVariant(home, n.app, image, 'agent');
     const am = await sharp(agent.path).metadata();
     expect(agent.placeholder).toBe(false);
     expect(am.format).toBe('jpeg');
@@ -216,20 +216,20 @@ describe('variants', () => {
     expect(am.orientation).toBeUndefined();
     expect(agent.bytes).toBeLessThanOrEqual(AGENT_TARGET_BYTES);
 
-    const thumb = await ensureVariant(home, n.cabinet, image, 'thumb');
+    const thumb = await ensureVariant(home, n.app, image, 'thumb');
     const tm = await sharp(thumb.path).metadata();
     expect(tm.format).toBe('webp');
     expect(Math.max(tm.width ?? 0, tm.height ?? 0)).toBe(480);
     expect(tm.exif).toBeUndefined();
     // The original keeps its bytes.
-    expect(readFileSync(join(home, 'projects', n.cabinet, 'images', r.file))).toEqual(photo);
+    expect(readFileSync(join(home, 'projects', n.app, 'images', r.file))).toEqual(photo);
   }, 30_000);
 
   it('rasterizes SVGs and regenerates missing variants', async () => {
     const home = tempWorkspace('pl');
-    const report = await generateVariants(home, { project: n.cabinet });
-    expect(report.images).toBe(24);
-    expect(report.generated).toBe(48);
+    const report = await generateVariants(home, { project: n.app });
+    expect(report.images).toBe(7);
+    expect(report.generated).toBe(14);
     expect(report.failed).toEqual([]);
     expect(report.placeholders).toEqual([]);
     const agentDir = join(home, '.taskpack', 'agent');
@@ -239,8 +239,8 @@ describe('variants', () => {
       expect(m.format).toBe('jpeg');
       expect(Math.max(m.width ?? 0, m.height ?? 0)).toBe(1024);
     }
-    expect((await generateVariants(home, { project: n.cabinet })).generated).toBe(0);
-    expect((await generateVariants(home, { project: n.cabinet, force: true })).generated).toBe(48);
+    expect((await generateVariants(home, { project: n.app })).generated).toBe(0);
+    expect((await generateVariants(home, { project: n.app, force: true })).generated).toBe(14);
   }, 30_000);
 });
 
@@ -253,25 +253,25 @@ describe('pin order', () => {
     const [first, second, ...rest] = start;
     if (!first || !second) throw new Error('fixture');
 
-    updateImage(ctxFor(home, 'user'), { project: n.cabinet, file: first, pinned: false });
+    updateImage(ctxFor(home, 'user'), { project: n.app, file: first, pinned: false });
     expect(pinned()).toEqual([second, ...rest]);
     const extra = images(home).find((i) => !i.pinned && i.file !== first)?.file ?? '';
-    updateImage(ctxFor(home, 'user'), { project: n.cabinet, file: extra, pinned: true });
+    updateImage(ctxFor(home, 'user'), { project: n.app, file: extra, pinned: true });
     expect(pinned()).toEqual([second, ...rest, extra]);
 
     const before = read(home, yamlRel);
     const order = [extra, ...rest, second];
-    const r = reorderPinned(ctxFor(home, 'user'), { project: n.cabinet, files: order });
+    const r = reorderPinned(ctxFor(home, 'user'), { project: n.app, files: order });
     expect(pinned()).toEqual(order);
     expect(r.changed.length).toBeGreaterThan(0);
     const withoutRanks = (text: string) => text.replace(/^ {4}pinned_order: \d+\n/gm, '');
     expect(withoutRanks(read(home, yamlRel))).toBe(withoutRanks(before));
 
     await expectError(
-      () => reorderPinned(ctxFor(home, 'user'), { project: n.cabinet, files: [extra] }),
+      () => reorderPinned(ctxFor(home, 'user'), { project: n.app, files: [extra] }),
       /every pinned image/,
     );
-    updateImage(ctxFor(home, 'user'), { project: n.cabinet, file: extra, pinned: false });
+    updateImage(ctxFor(home, 'user'), { project: n.app, file: extra, pinned: false });
     expect(images(home).find((i) => i.file === extra)?.pinned_order).toBeUndefined();
     expect(readActivity(home).map((e) => e.op)).toEqual(['image.unpin', 'image.pin', 'image.reorder', 'image.unpin']);
     expect(validateWorkspace(home).issues.filter((i) => i.severity === 'error')).toEqual([]);

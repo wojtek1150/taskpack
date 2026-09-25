@@ -112,7 +112,7 @@ export const sessionFrontmatterSchema = z.object({
   started: isoDateTime,
   ended: isoDateTime.optional(),
   via: z.enum(SESSION_VIA).optional(),
-  /** Short change list, e.g. "+2 todo", "pinned: Dimensions". */
+  /** Short change list, e.g. "+2 todo", "pinned: Purchase flow". */
   changes: z.array(z.string().min(1)).default([]),
   /** When the session's changes were undone (`taskpack session undo`, UI "Undo"); the note is kept. */
   undone: isoDateTime.optional(),

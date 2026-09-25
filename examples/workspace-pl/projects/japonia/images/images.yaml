@@ -1,0 +1,10 @@
+# Obrazy projektu. pinned: true = „aktualne” (max 5), trafiają do agenta w context packu.
+images:
+  - file: mapa-trasy.svg
+    title: Trasa — Tokio → Kanazawa → Kioto
+    category: visualization
+    caption: "Trzy bazy, wszędzie pociągiem: 4 noce w Tokio, 2 w Kanazawie, 4 w Kioto; jednodniowy wypad do Nary."
+    pinned: true
+    order: 1
+    tasks:
+      - trasa

@@ -1,7 +1,7 @@
 ---
 name: taskpack-workspace
 description: Taskpack workspace file format, statuses and the 1–5 weight rubric. Use to read or edit Taskpack files, taskpack:// refs, projekt, task, todo, waga, status.
-when_to_use: Any change to projects/*/project.md, todos.md, tasks/*.md, sessions/, notes/, images.yaml, inbox.md or questions.md; questions like "jak zapisać task", "what status", "jaka waga", "format pliku", "taskpack://witrynka".
+when_to_use: Any change to projects/*/project.md, todos.md, tasks/*.md, sessions/, notes/, images.yaml, inbox.md or questions.md; questions like "jak zapisać task", "what status", "jaka waga", "format pliku", "taskpack://premiera-proof".
 ---
 
 # Taskpack workspace format
@@ -47,12 +47,12 @@ Ids are optional: never invent an `id:` when writing by hand. An item without on
 ## Task frontmatter
 
 ```yaml
-title: Drzwiczki — wpust pod szybę   # required
+title: Paywall — jednorazowy zakup   # required
 status: in_progress                  # inbox | todo | in_progress | waiting | done | canceled
 weight: 4                            # 1–5
 due: 2026-09-28                      # optional date
 estimate: "~4 h"                     # optional
-blocked_note: blokuje montaż         # optional: what it blocks / waits for
+blocked_note: blokuje zgłoszenie     # optional: what it blocks / waits for
 ```
 
 Sections (all optional, headings in the workspace language): Description/Opis, Steps/Kroki, Notes/Notatki, Decisions/Decyzje. The first unticked step is the task's next step.

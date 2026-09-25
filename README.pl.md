@@ -4,7 +4,7 @@
 
 Projekty, zadania, todo, notatki z sesji i obrazy trzymasz jako zwykłe pliki Markdown/YAML w jednym folderze (`~/Taskpack`). Przeglądasz je w małej lokalnej aplikacji webowej, a Claude Code, Claude Desktop, Codex / ChatGPT desktop i Cursor pracują na tych samych plikach: przez lokalny serwer MCP, CLI `taskpack` albo dostęp do folderu. Wklejasz do czatu `taskpack://<projekt>` i agent dostaje zwięzły kontekst: cel, co zrobione, następny krok, decyzje, ostatnie sesje i aktualne obrazy. Na koniec dopisuje todo, postęp i notatkę z sesji. Każda zmiana jest podpisana i da się ją cofnąć.
 
-English version: [README.md](README.md).
+**[Demo na żywo →](https://wojtek1150.github.io/taskpack/)** działa w przeglądarce na przykładowych projektach; „Symuluj Claude” pokazuje sesję agenta, którą można cofnąć. English version: [README.md](README.md).
 
 ![Tablica](.github/screenshots/board.png)
 
@@ -33,7 +33,7 @@ English version: [README.md](README.md).
 - **Projekty:** strona projektu z edytowalnym podsumowaniem, todo, taskami, osią notatek i sesji agentów (z „Cofnij”) oraz galerią podzieloną na *Aktualne* (przypięte, wysyłane agentom) i *Wszystkie*.
 - **Taski:** opis, kroki ze znacznikiem „następny”, notatki i decyzje, powiązane obrazy i panel pokazujący dokładnie to, co dostanie agent.
 - **Dziś, Notatki, Pytania:** terminy i następne kroki ze wszystkich projektów, strumień notatek i sesji oraz pytania od agentów (odpowiadasz w aplikacji, agent dostaje odpowiedź przy następnej rozmowie).
-- **Paleta ⌘K:** wyszukiwanie po wszystkim (bez polskich znaków też: `szklo` znajdzie `szkło`) i szybkie akcje.
+- **Paleta ⌘K:** wyszukiwanie po wszystkim (bez polskich znaków też: `polka` znajdzie `półka`) i szybkie akcje.
 - **Na żywo:** gdy agent zmienia workspace (MCP, CLI albo pliki), aplikacja odświeża się w sekundę i pokazuje, kto co zmienił.
 
 ## Szybki start
@@ -107,6 +107,7 @@ pnpm dev         # API na :4242 + Vite na :5173
 pnpm test        # Vitest
 pnpm test:e2e    # Playwright (raz: `pnpm exec playwright install chromium`)
 pnpm lint        # Biome
+pnpm build:demo  # demo w przeglądarce dla GitHub Pages → apps/web/dist-demo (testuje je pnpm test:e2e:demo)
 pnpm typecheck
 ```
 

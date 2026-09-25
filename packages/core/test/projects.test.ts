@@ -51,8 +51,8 @@ describe('createProject', () => {
 
   it('picks a free slug and refuses bad input', () => {
     const home = tempWorkspace('en');
-    const a = createProject(ctxFor(home), { name: 'Display cabinet', kind: 'physical' });
-    expect(a.slug).toBe('display-cabinet-2');
+    const a = createProject(ctxFor(home), { name: 'Proof app', kind: 'digital' });
+    expect(a.slug).toBe('proof-app-2');
     expect(createProject(ctxFor(home), { name: 'Inbox', kind: 'life' }).slug).toBe('inbox-2');
     expect(read(home, a.file)).not.toContain('\n\n');
     expect(() => createProject(ctxFor(home), { name: 'X', kind: 'boat' as 'life' })).toThrow(/kind/);
@@ -64,9 +64,9 @@ describe('createProject', () => {
 describe('updateProject', () => {
   it('changes only the touched lines', () => {
     const home = tempWorkspace('pl');
-    const file = 'projects/witrynka/project.md';
+    const file = 'projects/premiera-proof/project.md';
     const before = read(home, file);
-    const r = updateProject(ctxFor(home, 'user'), { project: 'witrynka', name: 'Witryna', target: null });
+    const r = updateProject(ctxFor(home, 'user'), { project: 'premiera-proof', name: 'Witryna', target: null });
     expect(r.changed).toEqual(['name', 'target']);
     const diff = lineDiff(before, read(home, file));
     expect(diff.added).toEqual(['name: Witryna', ...diff.added.slice(1)]);
@@ -77,29 +77,27 @@ describe('updateProject', () => {
 
   it('replaces the description and keeps the summary section', () => {
     const home = tempWorkspace('pl');
-    const file = 'projects/witrynka/project.md';
-    updateProject(ctxFor(home, 'user'), { project: 'taskpack://witrynka', description: 'Nowy opis.' });
+    const file = 'projects/premiera-proof/project.md';
+    updateProject(ctxFor(home, 'user'), { project: 'taskpack://premiera-proof', description: 'Nowy opis.' });
     const text = read(home, file);
     expect(text).toMatch(/---\nNowy opis\.\n\n## Podsumowanie/);
-    expect(loadWorkspace(home).projects.find((p) => p.slug === 'witrynka')?.summary?.now).toBeTruthy();
-    updateProject(ctxFor(home, 'user'), { project: 'witrynka', description: '' });
+    expect(loadWorkspace(home).projects.find((p) => p.slug === 'premiera-proof')?.summary?.now).toBeTruthy();
+    updateProject(ctxFor(home, 'user'), { project: 'premiera-proof', description: '' });
     expect(read(home, file)).toMatch(/---\n\n## Podsumowanie/);
     expect(validateWorkspace(home).issues).toEqual([]);
   });
 
   it('archives and restores a project', () => {
     const home = tempWorkspace('en');
-    const before = read(home, 'projects/display-cabinet/project.md');
-    expect(updateProject(ctxFor(home, 'user'), { project: 'display-cabinet', archived: true }).changed).toEqual([
-      'archived',
-    ]);
-    expect(listProjects(home).some((p) => p.ref === 'taskpack://display-cabinet')).toBe(false);
-    expect(
-      listProjects(home, { include_archived: true }).find((p) => p.ref === 'taskpack://display-cabinet')?.archived,
-    ).toBe(true);
-    updateProject(ctxFor(home, 'user'), { project: 'display-cabinet', archived: false });
-    expect(read(home, 'projects/display-cabinet/project.md')).toBe(before);
+    const before = read(home, 'projects/proof-app/project.md');
+    expect(updateProject(ctxFor(home, 'user'), { project: 'proof-app', archived: true }).changed).toEqual(['archived']);
+    expect(listProjects(home).some((p) => p.ref === 'taskpack://proof-app')).toBe(false);
+    expect(listProjects(home, { include_archived: true }).find((p) => p.ref === 'taskpack://proof-app')?.archived).toBe(
+      true,
+    );
+    updateProject(ctxFor(home, 'user'), { project: 'proof-app', archived: false });
+    expect(read(home, 'projects/proof-app/project.md')).toBe(before);
     expect(readActivity(home).map((e) => e.op)).toEqual(['project.archive', 'project.unarchive']);
-    expect(updateProject(ctxFor(home), { project: 'display-cabinet', name: 'Display cabinet' }).changed).toEqual([]);
+    expect(updateProject(ctxFor(home), { project: 'proof-app', name: 'Proof launch' }).changed).toEqual([]);
   });
 });

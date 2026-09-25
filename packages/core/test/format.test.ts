@@ -124,42 +124,48 @@ describe('validateWorkspace on broken input', () => {
 
   it('reports bad frontmatter, stray lines, missing images and too many pins', () => {
     setup();
-    const cab = 'projects/display-cabinet';
-    edit(`${cab}/tasks/doors.md`, (s) =>
+    const cab = 'projects/proof-app';
+    edit(`${cab}/tasks/paywall.md`, (s) =>
       s.replace('status: in_progress', 'status: doing').replace('weight: 4', 'weight: 9'),
     );
     edit(`${cab}/todos.md`, (s) => `${s}not a checkbox\n`);
-    edit(`${cab}/images/images.yaml`, (s) => s.replace('- shelves', '- shelvez'));
-    edit(`${cab}/tasks/finish.md`, (s) => s.replace('status: todo', 'status: todo\nimages:\n  - sample-clear-oil.svg'));
+    edit(`${cab}/images/images.yaml`, (s) => s.replace('- onboarding', '- onboardingz'));
+    edit(`${cab}/tasks/app-store-listing.md`, (s) =>
+      s.replace('status: todo', 'status: todo\nimages:\n  - beta-crash-free.svg'),
+    );
     edit(`${cab}/images/images.yaml`, (s) => s.replaceAll('pinned: false', 'pinned: true'));
-    edit(`${cab}/project.md`, (s) => s.replace('kind: physical', 'kind: physical\nfavourite: true'));
-    rmSync(join(dir, cab, 'images/render-side.svg'));
+    edit(`${cab}/project.md`, (s) => s.replace('kind: digital', 'kind: digital\nfavourite: true'));
+    rmSync(join(dir, cab, 'images/app-icon-options.svg'));
 
     const { ok, issues } = validateWorkspace(dir);
     const errors = issues.filter((i) => i.severity === 'error').map((i) => `${i.file}: ${i.message}`);
     expect(ok).toBe(false);
     expect(errors).toEqual(
       expect.arrayContaining([
-        expect.stringMatching(/tasks\/doors\.md: status: .*weight: /),
+        expect.stringMatching(/tasks\/paywall\.md: status: .*weight: /),
         expect.stringMatching(/todos\.md: not a checklist item: "not a checkbox"/),
-        expect.stringMatching(/images\.yaml: image "shelves-pin-spacing\.svg" refers to unknown task "shelvez"/),
-        expect.stringMatching(/images\.yaml: 24 pinned images, at most 5 allowed/),
-        expect.stringMatching(/images\.yaml: file "render-side\.svg" does not exist/),
+        expect.stringMatching(/images\.yaml: image "onboarding-wireframes\.svg" refers to unknown task "onboardingz"/),
+        expect.stringMatching(/images\.yaml: 7 pinned images, at most 5 allowed/),
+        expect.stringMatching(/images\.yaml: file "app-icon-options\.svg" does not exist/),
       ]),
     );
     expect(issues).toContainEqual(expect.objectContaining({ severity: 'warning', message: 'unknown key "favourite"' }));
     // Task↔image links live only in images.yaml.
     expect(issues).toContainEqual(
-      expect.objectContaining({ file: `${cab}/tasks/finish.md`, severity: 'warning', message: 'unknown key "images"' }),
+      expect.objectContaining({
+        file: `${cab}/tasks/app-store-listing.md`,
+        severity: 'warning',
+        message: 'unknown key "images"',
+      }),
     );
   });
 
   it('reports invalid slugs, session names and metadata', () => {
     setup();
-    cpSync(join(dir, 'projects/home'), join(dir, 'projects/Home Stuff'), { recursive: true });
+    cpSync(join(dir, 'projects/japan-trip'), join(dir, 'projects/Home Stuff'), { recursive: true });
     cpSync(
-      join(dir, 'projects/home/sessions/2026-09-21-chatgpt.md'),
-      join(dir, 'projects/home/sessions/2026-09-21-gpt.md'),
+      join(dir, 'projects/japan-trip/sessions/2026-09-21-chatgpt.md'),
+      join(dir, 'projects/japan-trip/sessions/2026-09-21-gpt.md'),
     );
     edit('inbox.md', (s) => s.replace('by:claude', 'by:robot'));
 
@@ -191,13 +197,13 @@ describe('format spec worked example', () => {
         mkdirSync(dirname(path), { recursive: true });
         writeFileSync(path, content ?? '');
       }
-      for (const img of ['wymiary.svg', 'detal-wpust.svg']) {
-        writeFileSync(join(dir, 'projects/witrynka/images', img), '<svg xmlns="http://www.w3.org/2000/svg"/>');
+      for (const img of ['paywall.svg', 'sciezka-zakupu.svg']) {
+        writeFileSync(join(dir, 'projects/premiera-proof/images', img), '<svg xmlns="http://www.w3.org/2000/svg"/>');
       }
       const { ok, issues, workspace } = validateWorkspace(dir);
       expect(issues).toEqual([]);
       expect(ok).toBe(true);
-      expect(workspace.projects[0]?.tasks.map((t) => t.slug)).toEqual(['drzwiczki', 'korpus']);
+      expect(workspace.projects[0]?.tasks.map((t) => t.slug)).toEqual(['minutniki', 'zakup-w-aplikacji']);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

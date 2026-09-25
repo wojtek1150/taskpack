@@ -89,7 +89,13 @@ const routeTree = rootRoute.addChildren([
   settingsRoute,
 ]);
 
-export const router = createRouter({ routeTree, defaultPreload: 'intent', scrollRestoration: true });
+export const router = createRouter({
+  routeTree,
+  // `/` in the app, `/taskpack/` in the demo build on GitHub Pages.
+  basepath: import.meta.env.BASE_URL,
+  defaultPreload: 'intent',
+  scrollRestoration: true,
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

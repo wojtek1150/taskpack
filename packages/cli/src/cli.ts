@@ -216,9 +216,10 @@ export async function runCli(argv: string[], io: Io = defaultIo()): Promise<numb
     .command('init')
     .description('create a workspace (taskpack.yaml, inbox.md, questions.md, projects/, git repo)')
     .option('--example', 'copy the example workspace in the chosen language')
+    .option('--example-date <date>', 'date the example data is shifted to (YYYY-MM-DD, default: today)')
     .option('--no-git', 'do not create a git repository')
     .option('--no-kit', 'do not install the agent kit (AGENTS.md, CLAUDE.md, .claude/, .mcp.json)')
-    .action(async (opts: { example?: boolean; git: boolean; kit: boolean }, cmd: Command) => {
+    .action(async (opts: { example?: boolean; exampleDate?: string; git: boolean; kit: boolean }, cmd: Command) => {
       let lang = globals(cmd).lang;
       if (!lang && io.isTTY && io.prompt) {
         const answer = (await io.prompt('Language / Język [en/pl] (en): ')).trim().toLowerCase();
@@ -230,6 +231,7 @@ export async function runCli(argv: string[], io: Io = defaultIo()): Promise<numb
         lang,
         git: opts.git,
         ...(opts.example ? { exampleDir: join(io.examplesDir, `workspace-${lang}`) } : {}),
+        ...(opts.exampleDate ? { exampleToday: opts.exampleDate } : {}),
         ...(opts.kit ? { kit: { kitDir: io.kitDir, ...kitNode() } } : {}),
       });
       print(cmd, result, () => {

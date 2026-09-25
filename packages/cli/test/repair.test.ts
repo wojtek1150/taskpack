@@ -42,10 +42,10 @@ describe.skipIf(!CLI_BUILT)('workspace launcher (needs `pnpm build`)', () => {
     const home = await exampleWorkspace('pl');
     const moved = join(newHome(), 'Moved');
     cpSync(home, moved, { recursive: true });
-    const r = launcher(moved, ['--actor', 'claude-code', 'todo', 'add', 'witrynka', 'Po przeprowadzce']);
+    const r = launcher(moved, ['--actor', 'claude-code', 'todo', 'add', 'premiera-proof', 'Po przeprowadzce']);
     expect(r.code, r.err).toBe(0);
-    expect(read(moved, 'projects/witrynka/todos.md')).toContain('Po przeprowadzce');
-    expect(read(home, 'projects/witrynka/todos.md')).not.toContain('Po przeprowadzce');
+    expect(read(moved, 'projects/premiera-proof/todos.md')).toContain('Po przeprowadzce');
+    expect(read(home, 'projects/premiera-proof/todos.md')).not.toContain('Po przeprowadzce');
   });
 
   it('after Taskpack moved: explains how to repair, and kit repair fixes it', async () => {
@@ -156,7 +156,7 @@ describe.skipIf(!CLI_BUILT || process.platform === 'win32')('workspace shim find
     setNode(home, markedNode(join(newHome(), 'recorded/node'), mark));
     const r = shim(home, ['status'], { PATH: toolsOnly(), HOME: newHome(), TASKPACK_NODE_DISCOVERY: '0' });
     expect(r.code, r.err).toBe(0);
-    expect(r.out).toContain('Display cabinet');
+    expect(r.out).toContain('Proof launch');
     expect(existsSync(mark)).toBe(true);
   });
 

@@ -4,7 +4,7 @@
 
 Your projects, tasks, todos, session notes and images live as plain Markdown/YAML files in one folder (`~/Taskpack`). You manage them in a small local web app; Claude Code, Claude Desktop, Codex / ChatGPT desktop and Cursor work on the very same files through a local MCP server, the `taskpack` CLI or direct folder access. Paste `taskpack://<project>` into a chat and the agent gets a compact context pack: the goal, what's done, the next step, decisions, the last sessions and the current images. When it's done, it writes back todos, progress and a session note, and every change is attributed and undoable.
 
-Polish version: [README.pl.md](README.pl.md).
+**[Live demo →](https://wojtek1150.github.io/taskpack/)** runs in your browser with sample projects; press “Simulate Claude” to watch an agent session and undo it. Polish version: [README.pl.md](README.pl.md).
 
 ![Board](.github/screenshots/board.png)
 
@@ -33,7 +33,7 @@ Polish version: [README.pl.md](README.pl.md).
 - **Projects:** a page per project with an editable summary, todos, tasks, a timeline of notes and agent sessions (with "Undo"), and a gallery split into *Current* (pinned, sent to agents) and *All*.
 - **Tasks:** description, steps with a "next" marker, notes and decisions, linked images, and a rail that shows exactly what the agent will receive.
 - **Today, Notes, Questions:** deadlines and next steps across projects, a feed of every note and session, and questions agents asked you (answer them from the UI; the agent gets the answer next time).
-- **⌘K palette:** search everything (diacritics folded, so `szklo` finds `szkło`) plus quick actions.
+- **⌘K palette:** search everything (diacritics folded, so `polka` finds `półka`) plus quick actions.
 - **Live:** when an agent edits the workspace (MCP, CLI or files), the UI updates within a second and tells you who changed what.
 
 ## Quick start
@@ -107,6 +107,7 @@ pnpm dev         # API on :4242 + Vite on :5173
 pnpm test        # Vitest
 pnpm test:e2e    # Playwright (run `pnpm exec playwright install chromium` once)
 pnpm lint        # Biome
+pnpm build:demo  # the in-browser demo for GitHub Pages → apps/web/dist-demo (pnpm test:e2e:demo tests it)
 pnpm typecheck
 ```
 

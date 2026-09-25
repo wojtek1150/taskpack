@@ -30,7 +30,7 @@ describe('validation messages follow the workspace language', () => {
 
   it('uses Polish in a Polish workspace, English on request', () => {
     const home = tempWorkspace('pl');
-    breakIt(home, 'witrynka');
+    breakIt(home, 'premiera-proof');
     const pl = validateWorkspace(home).issues.map((i) => i.message);
     expect(pl).toContain('to nie jest element checklisty: „not a checkbox”');
     const en = validateWorkspace(home, { lang: 'en' }).issues.map((i) => i.message);
@@ -39,18 +39,21 @@ describe('validation messages follow the workspace language', () => {
 
   it('translates Zod and Taskpack schema messages', () => {
     const home = tempWorkspace('pl');
-    const project = join(home, 'projects/witrynka/project.md');
-    writeFileSync(project, read(home, 'projects/witrynka/project.md').replace(/color: "#\w+"/, 'color: "red"'));
-    const issue = validateWorkspace(home).issues.find((i) => i.file.endsWith('witrynka/project.md'));
+    const project = join(home, 'projects/premiera-proof/project.md');
+    writeFileSync(project, read(home, 'projects/premiera-proof/project.md').replace(/color: "#\w+"/, 'color: "red"'));
+    const issue = validateWorkspace(home).issues.find((i) => i.file.endsWith('premiera-proof/project.md'));
     expect(issue?.message).toBe('color: oczekiwano #RRGGBB');
   });
 
   it('reports an invalid task once, not again for the images that link to it', () => {
     const home = tempWorkspace('pl');
-    const task = join(home, 'projects/witrynka/tasks/drzwiczki.md');
-    writeFileSync(task, read(home, 'projects/witrynka/tasks/drzwiczki.md').replace('weight: 4', 'weight: 9'));
+    const task = join(home, 'projects/premiera-proof/tasks/zakup-w-aplikacji.md');
+    writeFileSync(
+      task,
+      read(home, 'projects/premiera-proof/tasks/zakup-w-aplikacji.md').replace('weight: 4', 'weight: 9'),
+    );
     const errors = validateWorkspace(home).issues.filter((i) => i.severity === 'error');
-    expect(errors.map((i) => i.file)).toEqual(['projects/witrynka/tasks/drzwiczki.md']);
+    expect(errors.map((i) => i.file)).toEqual(['projects/premiera-proof/tasks/zakup-w-aplikacji.md']);
   });
 });
 
@@ -62,7 +65,7 @@ describe('markDelivered', () => {
     expect(r.delivered).toEqual(['q_7h2k']);
     expect(read(home, 'questions.md')).toMatch(/id:q_7h2k .*status:delivered/);
     // Not a session change.
-    const s = logSession(ctxFor(home), { project: 'finanse', summary: 'x' });
+    const s = logSession(ctxFor(home), { project: 'biurko', summary: 'x' });
     expect(s.recorded_changes).toEqual([]);
   });
 });
@@ -70,12 +73,12 @@ describe('markDelivered', () => {
 describe('recordFileEdit', () => {
   it('logs file.edit without touching the file; a hand-written session note counts as session.log', () => {
     const home = tempWorkspace('en');
-    const rel = 'projects/home/todos.md';
+    const rel = 'projects/japan-trip/todos.md';
     const edited = `${read(home, rel)}- [ ] Call the plumber\n`;
     writeFileSync(join(home, rel), edited);
-    expect(recordFileEdit(ctxFor(home), { file: rel })).toEqual({ file: rel, project: 'home' });
+    expect(recordFileEdit(ctxFor(home), { file: rel })).toEqual({ file: rel, project: 'japan-trip' });
     expect(read(home, rel)).toBe(edited);
-    recordFileEdit(ctxFor(home), { file: 'projects/home/sessions/2026-09-21-chatgpt.md' });
+    recordFileEdit(ctxFor(home), { file: 'projects/japan-trip/sessions/2026-09-21-chatgpt.md' });
     expect(readActivity(home).map((e) => [e.op, e.summary])).toEqual([
       ['file.edit', 'edited: todos.md'],
       ['session.log', 'edited: sessions/2026-09-21-chatgpt.md'],
@@ -87,7 +90,7 @@ describe('recordFileEdit', () => {
 describe('workspace discovery', () => {
   it('finds the workspace from a folder inside it, after --home and TASKPACK_HOME', () => {
     const home = tempWorkspace('pl');
-    const inside = join(home, 'projects/witrynka/tasks');
+    const inside = join(home, 'projects/premiera-proof/tasks');
     expect(findWorkspaceRoot(inside)).toBe(home);
     expect(resolveHome(undefined, {}, inside)).toBe(home);
     expect(resolveHome(undefined, { TASKPACK_HOME: 'x' }, '/tmp')).toBe('/tmp/x');
@@ -142,8 +145,8 @@ describe('implicit ids for items written without one', () => {
 
   it('are stable, distinct for duplicate texts and scoped to their file', () => {
     const home = tempWorkspace('pl');
-    append(home, 'projects/witrynka/todos.md', '- [ ] Kupić klej\n- [ ] Kupić klej\n');
-    append(home, 'projects/dom/todos.md', '- [ ] Kupić klej\n');
+    append(home, 'projects/premiera-proof/todos.md', '- [ ] Kupić klej\n- [ ] Kupić klej\n');
+    append(home, 'projects/japonia/todos.md', '- [ ] Kupić klej\n');
     const ids = () => {
       const ws = loadWorkspace(home);
       const pick = (slug: string) =>
@@ -151,37 +154,37 @@ describe('implicit ids for items written without one', () => {
           .find((p) => p.slug === slug)
           ?.todos.filter((t) => t.text === 'Kupić klej')
           .map((t) => t.id);
-      return [...(pick('witrynka') ?? []), ...(pick('dom') ?? [])];
+      return [...(pick('premiera-proof') ?? []), ...(pick('japonia') ?? [])];
     };
     const first = ids();
     expect(first).toHaveLength(3);
     expect(new Set(first).size).toBe(3);
     expect(ids()).toEqual(first);
     // Persisted unchanged when Taskpack writes the file for another reason.
-    addTodos(ctxFor(home), { project: 'witrynka', text: 'Inne' });
-    expect(read(home, 'projects/witrynka/todos.md')).toContain(`Kupić klej <!-- id:${first[0]} -->`);
-    expect(read(home, 'projects/witrynka/todos.md')).toContain(`Kupić klej <!-- id:${first[1]} -->`);
+    addTodos(ctxFor(home), { project: 'premiera-proof', text: 'Inne' });
+    expect(read(home, 'projects/premiera-proof/todos.md')).toContain(`Kupić klej <!-- id:${first[0]} -->`);
+    expect(read(home, 'projects/premiera-proof/todos.md')).toContain(`Kupić klej <!-- id:${first[1]} -->`);
     expect(ids()).toEqual(first);
   });
 
   it('address steps and questions too', () => {
     const home = tempWorkspace('pl');
-    const task = 'projects/witrynka/tasks/drzwiczki.md';
+    const task = 'projects/premiera-proof/tasks/zakup-w-aplikacji.md';
     writeFileSync(join(home, task), read(home, task).replace('## Notatki', '- [ ] Zamontować zawiasy\n\n## Notatki'));
     const step = loadWorkspace(home)
-      .projects.find((p) => p.slug === 'witrynka')
-      ?.tasks.find((t) => t.slug === 'drzwiczki')
+      .projects.find((p) => p.slug === 'premiera-proof')
+      ?.tasks.find((t) => t.slug === 'zakup-w-aplikacji')
       ?.steps.find((s) => s.text === 'Zamontować zawiasy')?.id;
     expect(step).toMatch(/^st_[a-z0-9]{6}$/);
-    updateTask(ctxFor(home), { task: 'witrynka/drzwiczki', check_steps: [step ?? ''] });
+    updateTask(ctxFor(home), { task: 'premiera-proof/zakup-w-aplikacji', check_steps: [step ?? ''] });
     expect(read(home, task)).toMatch(new RegExp(`- \\[x\\] Zamontować zawiasy <!-- id:${step} done:`));
 
-    append(home, 'questions.md', '\n## Lakier czy olej?\n<!-- by:user at:2026-09-24 project:witrynka -->\n');
+    append(home, 'questions.md', '\n## Lakier czy olej?\n<!-- by:user at:2026-09-24 project:premiera-proof -->\n');
     const q = loadWorkspace(home).questions.find((x) => x.question === 'Lakier czy olej?')?.id ?? '';
     expect(q).toMatch(/^q_[a-z0-9]{6}$/);
     answerQuestion(ctxFor(home, 'user'), { question_id: q, answer: 'Olej.' });
     expect(read(home, 'questions.md')).toContain(
-      `<!-- id:${q} by:user at:2026-09-24 project:witrynka status:answered -->`,
+      `<!-- id:${q} by:user at:2026-09-24 project:premiera-proof status:answered -->`,
     );
   });
 });

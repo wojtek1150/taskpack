@@ -20,7 +20,7 @@ import styles from './TaskPage.module.css';
 
 const route = getRouteApi('/p/$project/t/$task');
 
-/** "Drzwiczki — wpust pod szybę" → first part on one line, the rest in the gradient. */
+/** "Paywall — one-time purchase" → first part on one line, the rest in the gradient. */
 function splitTitle(title: string): [string, string] {
   const i = title.indexOf(' — ');
   return i > 0 ? [`${title.slice(0, i)} —`, title.slice(i + 3)] : ['', title];

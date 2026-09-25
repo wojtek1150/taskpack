@@ -1,5 +1,6 @@
 import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { checkDate, freshenExample } from './example.js';
 import type { Lang } from './format/enums.js';
 import { headingFor } from './format/i18n.js';
 import { initRepo } from './git.js';
@@ -12,6 +13,8 @@ export interface InitOptions {
   lang: Lang;
   /** Copy this example workspace (e.g. `examples/workspace-pl`) instead of an empty skeleton. */
   exampleDir?: string;
+  /** The example's dates are shifted to sit around this day, `YYYY-MM-DD` (default: today). */
+  exampleToday?: string;
   /** Create a git repository with an initial commit (default true). */
   git?: boolean;
   /** Install the agent kit (AGENTS.md, CLAUDE.md, .claude/, .mcp.json). */
@@ -53,6 +56,7 @@ export function initWorkspace(opts: InitOptions): InitResult {
   if (existsSync(home) && readdirSync(home).some((f) => f !== '.DS_Store')) {
     throw new TaskpackError('exists', `${home} is not empty`);
   }
+  if (opts.exampleToday !== undefined) checkDate(opts.exampleToday);
   mkdirSync(home, { recursive: true });
 
   if (opts.exampleDir) {
@@ -63,6 +67,7 @@ export function initWorkspace(opts: InitOptions): InitResult {
       recursive: true,
       filter: (src) => !src.split(/[\\/]/).some((p) => p === DATA_DIR || p === LEGACY_DATA_DIR),
     });
+    freshenExample(home, opts.exampleToday);
   } else {
     writeFileSync(join(home, CONFIG_FILE), configTemplate(lang));
     writeFileSync(join(home, 'inbox.md'), `# ${headingFor('inbox', lang)}\n`);

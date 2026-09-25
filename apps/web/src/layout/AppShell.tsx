@@ -3,6 +3,7 @@ import { Outlet, useRouterState } from '@tanstack/react-router';
 import type { ProjectsView } from '@taskpack/api';
 import { useCallback } from 'react';
 import { Toaster } from 'sonner';
+import { demoSlot } from '../lib/demo';
 import { useLiveUpdates } from '../lib/events';
 import { keys } from '../lib/queries';
 import styles from './AppShell.module.css';
@@ -21,12 +22,14 @@ export function AppShell() {
   );
   useLiveUpdates(projectName);
   const full = FULL_WIDTH.some((re) => re.test(path));
+  const Banner = demoSlot.Banner;
 
   return (
     <CommandsProvider>
       <div className={styles.shell}>
         {!full && <Sidebar />}
         <div className={styles.main}>
+          {Banner && <Banner />}
           <Outlet />
         </div>
         <Toaster

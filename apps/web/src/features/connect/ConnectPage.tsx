@@ -83,6 +83,11 @@ export function ConnectPage() {
         </h1>
         <p className={styles.intro}>{t('connect.intro')}</p>
       </header>
+      {__TASKPACK_DEMO__ && (
+        <p className={styles.demo} role="note">
+          {t('demo.connect')}
+        </p>
+      )}
 
       <div className={styles.grid}>
         <section className={styles.panel} aria-labelledby="clients-heading">

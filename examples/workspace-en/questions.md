@@ -1,25 +1,33 @@
 # Questions
 
-## Send a reminder about the headphones refund?
-<!-- id:q_7h2k by:claude at:2026-09-23T09:15:00+02:00 project:finances task:headphones-refund status:open -->
+## Send the shop a reminder about the desk frame?
+<!-- id:q_7h2k by:claude at:2026-09-23T09:15:00+02:00 project:studio-desk task:desk-frame status:open -->
 
-The shop has not replied about the headphones refund for 6 days. Send a reminder from the template?
+The frame is six days past the promised delivery and the shop has not answered two messages. I drafted a firm reminder: a tracking number within 3 days, otherwise a refund. Send it?
 
 ### Options
 - Yes, send it
-- I will reply myself
+- I will call them myself
 
-### Answer
+## Show the subscriber count on the landing page?
+<!-- id:q_n4vd by:claude-code at:2026-09-22T18:15:00+02:00 project:launch-newsletter task:landing-page status:open -->
 
-## Overlay or inset hinges?
-<!-- id:q_3m9p by:claude at:2026-09-22T21:35:00+02:00 project:display-cabinet status:delivered -->
-
-Both types fit a 20 mm framed door. Overlay hinges are simpler to fit.
+312 people have signed up. Social proof usually helps, but a small number can also put people off.
 
 ### Options
-- Overlay
-- Inset
+- Show it now
+- Wait until 500
+- Never show it
+
+## One-time purchase or subscription?
+<!-- id:q_3m9p by:claude at:2026-09-22T21:35:00+02:00 project:proof-app status:delivered -->
+
+Both work with StoreKit 2. A subscription needs ongoing value (sync, new recipes); a one-time purchase fits an offline timer.
+
+### Options
+- One-time purchase
+- Subscription
 
 ### Answer
 
-Overlay, brass finish.
+One-time, €12.99. Maybe a tip jar later.

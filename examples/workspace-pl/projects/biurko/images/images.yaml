@@ -1,0 +1,18 @@
+# Obrazy projektu. pinned: true = „aktualne” (max 5), trafiają do agenta w context packu.
+images:
+  - file: szkic-biurka.svg
+    title: Biurko — szkic z wymiarami
+    category: drawing
+    caption: "Blat 160 × 70 cm ze sklejki brzozowej 18 mm; korytko na kable 12 cm z tyłu; półka pod monitor 110 × 22 cm."
+    pinned: true
+    order: 1
+    tasks:
+      - blat
+  - file: plan-pokoju.svg
+    title: Plan pokoju
+    category: drawing
+    caption: "Pokój 3,2 × 2,8 m: biurko pod oknem, panele akustyczne na ścianie za krzesłem."
+    pinned: true
+    order: 2
+    tasks:
+      - panele-akustyczne

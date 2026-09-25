@@ -62,26 +62,26 @@ describe('taskpack project', () => {
 describe('taskpack session undo', () => {
   it('reverts an agent session made through the CLI; --dry-run changes nothing', async () => {
     const home = await exampleWorkspace('pl');
-    const before = read(home, 'projects/witrynka/todos.md');
+    const before = read(home, 'projects/premiera-proof/todos.md');
     const agent = { TASKPACK_HOME: home, TASKPACK_ACTOR: 'codex' };
-    await taskpack(['todo', 'add', 'witrynka', 'Kupić', 'kołki'], { env: agent });
-    await taskpack(['task', 'update', 'witrynka/drzwiczki', '--check', '2'], { env: agent });
-    const logged = await taskpack(['session', 'log', 'witrynka', '--summary', 'Kołki i wpust.', '--json'], {
+    await taskpack(['todo', 'add', 'premiera-proof', 'Kupić', 'kołki'], { env: agent });
+    await taskpack(['task', 'update', 'premiera-proof/zakup-w-aplikacji', '--check', '2'], { env: agent });
+    const logged = await taskpack(['session', 'log', 'premiera-proof', '--summary', 'Kołki i wpust.', '--json'], {
       env: agent,
     });
     const file = (JSON.parse(logged.out) as { file: string }).file;
     const head = git(home, 'rev-parse', 'HEAD');
 
-    const dry = await taskpack(['session', 'undo', 'witrynka', '--dry-run'], { env: { TASKPACK_HOME: home } });
+    const dry = await taskpack(['session', 'undo', 'premiera-proof', '--dry-run'], { env: { TASKPACK_HOME: home } });
     expect(dry.code, dry.err).toBe(0);
     expect(dry.out).toContain(file);
-    expect(dry.out).toContain('M projects/witrynka/todos.md');
+    expect(dry.out).toContain('M projects/premiera-proof/todos.md');
     expect(git(home, 'rev-parse', 'HEAD')).toBe(head);
 
     const undo = await taskpack(['session', 'undo', file], { env: { TASKPACK_HOME: home } });
     expect(undo.code, undo.err).toBe(0);
-    expect(undo.out).toMatch(/Cofnięto sesję projects\/witrynka\/sessions\/.+ \(commit [0-9a-f]+\)/);
-    expect(read(home, 'projects/witrynka/todos.md')).toBe(before);
+    expect(undo.out).toMatch(/Cofnięto sesję projects\/premiera-proof\/sessions\/.+ \(commit [0-9a-f]+\)/);
+    expect(read(home, 'projects/premiera-proof/todos.md')).toBe(before);
     expect(read(home, file)).toMatch(/^undone: /m);
 
     const again = await taskpack(['session', 'undo', file], { env: { TASKPACK_HOME: home } });
@@ -91,7 +91,7 @@ describe('taskpack session undo', () => {
 
   it('a session note written by hand (after-edit hook) is committed and can be undone', async () => {
     const home = await exampleWorkspace('en');
-    const todos = 'projects/display-cabinet/todos.md';
+    const todos = 'projects/proof-app/todos.md';
     const before = read(home, todos);
     const edit = (rel: string, content: string) => {
       mkdirSync(join(home, rel, '..'), { recursive: true });
@@ -101,7 +101,7 @@ describe('taskpack session undo', () => {
       });
     };
     expect((await edit(todos, before.replace('# Todo\n', '# Todo\n\n- [ ] Buy dowels\n'))).code).toBe(0);
-    const note = 'projects/display-cabinet/sessions/2026-09-25-claude-code.md';
+    const note = 'projects/proof-app/sessions/2026-09-25-claude-code.md';
     const r = await edit(
       note,
       '---\nagent: claude-code\nstarted: 2026-09-25T10:00:00+02:00\nended: 2026-09-25T10:30:00+02:00\nvia: files\n---\n\nAdded dowels.\n',
@@ -120,18 +120,18 @@ describe('taskpack session undo', () => {
   it('refuses on uncommitted changes with a clear message, --commit-pending proceeds', async () => {
     const home = await exampleWorkspace('en');
     const env = { TASKPACK_HOME: home, TASKPACK_ACTOR: 'claude-code' };
-    await taskpack(['todo', 'add', 'display-cabinet', 'Glue'], { env });
-    await taskpack(['session', 'log', 'display-cabinet', '--summary', 'Glue.'], { env });
+    await taskpack(['todo', 'add', 'proof-app', 'Glue'], { env });
+    await taskpack(['session', 'log', 'proof-app', '--summary', 'Glue.'], { env });
     writeFileSync(join(home, 'inbox.md'), `${readFileSync(join(home, 'inbox.md'), 'utf8')}- [ ] Hand edit\n`);
-    const refused = await taskpack(['session', 'undo', 'display-cabinet'], { env: { TASKPACK_HOME: home } });
+    const refused = await taskpack(['session', 'undo', 'proof-app'], { env: { TASKPACK_HOME: home } });
     expect(refused.code).toBe(1);
     expect(refused.err).toContain('not committed to git (inbox.md)');
-    const ok = await taskpack(['session', 'undo', 'display-cabinet', '--commit-pending'], {
+    const ok = await taskpack(['session', 'undo', 'proof-app', '--commit-pending'], {
       env: { TASKPACK_HOME: home },
     });
     expect(ok.code, ok.err).toBe(0);
     expect(ok.out).toContain('Committed manual changes');
     expect(read(home, 'inbox.md')).toContain('Hand edit');
-    expect(read(home, 'projects/display-cabinet/todos.md')).not.toContain('Glue');
+    expect(read(home, 'projects/proof-app/todos.md')).not.toContain('Glue');
   });
 });

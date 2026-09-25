@@ -185,7 +185,7 @@ export function createTaskpackServer(opts: TaskpackServerOptions): McpServer {
   );
 
   // Prompts, in the workspace language (they become the user's message).
-  const projectArg = z.object({ project: z.string().min(1).describe('Project slug, e.g. witrynka') });
+  const projectArg = z.object({ project: z.string().min(1).describe('Project slug, e.g. proof-app') });
   const promptText = (text: string) => ({
     messages: [{ role: 'user' as const, content: { type: 'text' as const, text } }],
   });

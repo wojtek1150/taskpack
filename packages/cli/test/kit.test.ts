@@ -309,11 +309,11 @@ describe('paths and packs', () => {
   it('resolves relative paths from INIT_CWD (pnpm taskpack)', async () => {
     const home = await exampleWorkspace('pl');
     const env = { INIT_CWD: dirname(home) };
-    const ok = await taskpack(['--home', 'Taskpack', 'validate', 'Taskpack/projects/witrynka/todos.md'], { env });
+    const ok = await taskpack(['--home', 'Taskpack', 'validate', 'Taskpack/projects/premiera-proof/todos.md'], { env });
     expect(ok.code, ok.err).toBe(0);
     expect(ok.out).toContain('Workspace poprawny.');
     // Without --home or TASKPACK_HOME, the workspace the working folder is in.
-    const inside = await taskpack(['status', '--json'], { env: { INIT_CWD: join(home, 'projects/witrynka') } });
+    const inside = await taskpack(['status', '--json'], { env: { INIT_CWD: join(home, 'projects/premiera-proof') } });
     expect(JSON.parse(inside.out).projects).toHaveLength(5);
     expect(relative(home, home)).toBe('');
   });
@@ -321,9 +321,9 @@ describe('paths and packs', () => {
   it('pack --mark-delivered marks included answers', async () => {
     const home = await exampleWorkspace('pl');
     answerQuestion({ home, actor: 'user' }, { question_id: 'q_7h2k', answer: 'Tak.' });
-    await taskpack(['pack', 'finanse', '--home', home]);
+    await taskpack(['pack', 'biurko', '--home', home]);
     expect(read(home, 'questions.md')).toMatch(/id:q_7h2k .*status:answered/);
-    await taskpack(['pack', 'finanse', '--mark-delivered', '--home', home, '--actor', 'claude-code']);
+    await taskpack(['pack', 'biurko', '--mark-delivered', '--home', home, '--actor', 'claude-code']);
     expect(read(home, 'questions.md')).toMatch(/id:q_7h2k .*status:delivered/);
   });
 });

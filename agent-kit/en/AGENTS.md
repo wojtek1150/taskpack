@@ -18,7 +18,7 @@ projects/<project>/
 .taskpack/                     derived data (index, activity log): never edit
 ```
 
-A reference `taskpack://witrynka` means the project folder `projects/witrynka/`; `taskpack://witrynka/drzwiczki` means `projects/witrynka/tasks/drzwiczki.md`.
+A reference `taskpack://proof-app` means the project folder `projects/proof-app/`; `taskpack://proof-app/paywall` means `projects/proof-app/tasks/paywall.md`.
 
 ## 1. Get the context first
 

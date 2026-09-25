@@ -56,7 +56,7 @@ export function pinnedImages<T extends Pick<ImageEntry, 'order' | 'pinned' | 'pi
     .map(({ img }) => img);
 }
 
-/** `taskpack://witrynka/images/render-front.jpg` */
+/** `taskpack://proof-app/images/home-screen.png` */
 export const formatImageRef = (project: string, file: string) => `taskpack://${project}/images/${file}`;
 
 /** Parse `taskpack://p/images/f`, `p/images/f` or `p/f` (a file name has an extension). */
@@ -146,7 +146,7 @@ function nextPinnedOrder(list: YAMLSeq): number {
   return Math.max(0, ...ranks) + 1;
 }
 
-/** Task slugs from slugs or refs (`drzwiczki`, `witrynka/drzwiczki`), checked against the project. */
+/** Task slugs from slugs or refs (`paywall`, `proof-app/paywall`), checked against the project. */
 function taskSlugs(project: ProjectData, tasks: string[]): string[] {
   const out: string[] = [];
   for (const t of tasks) {
@@ -331,7 +331,7 @@ export interface AddImageResult {
 
 const ALLOWED = Object.keys(IMAGE_TYPES).join(', ');
 
-/** Title from a file name: `render-front_v2.jpg` → `Render front v2`. */
+/** Title from a file name: `home-screen_v2.jpg` → `Home screen v2`. */
 function titleFromName(name: string): string {
   const base = basename(name, extname(name))
     .replace(/[-_.]+/g, ' ')

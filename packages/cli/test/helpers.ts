@@ -50,7 +50,7 @@ export const newHome = () => join(mkdtempSync(join(tmpdir(), 'taskpack-cli-')), 
 /** `taskpack init --example` with the kit, in a fresh temp folder. */
 export async function exampleWorkspace(lang: 'pl' | 'en' = 'pl'): Promise<string> {
   const home = newHome();
-  const init = await taskpack(['init', '--example', '--lang', lang, '--home', home]);
+  const init = await taskpack(['init', '--example', '--example-date', '2026-09-25', '--lang', lang, '--home', home]);
   if (init.code !== 0) throw new Error(init.err);
   return home;
 }

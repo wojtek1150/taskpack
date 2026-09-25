@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { actorName } from './format';
 import { invalidateProject, keys } from './queries';
 
-/** Group agent activity per actor and project: "Claude Code · Witrynka: +2 todo, kroki: +1". */
+/** Group agent activity per actor and project: "Claude Code · Proof launch: +2 todos, steps: +1". */
 function describe(activity: ActivityView[]): { actor: string; project?: string; summaries: string[] }[] {
   const groups = new Map<string, { actor: string; project?: string; summaries: string[] }>();
   for (const a of activity) {

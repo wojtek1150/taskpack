@@ -1,0 +1,16 @@
+# Obrazy projektu. pinned: true = „aktualne” (max 5), trafiają do agenta w context packu.
+images:
+  - file: przyrost-subskrybentow.svg
+    title: Subskrybenci — pierwsze pięć tygodni
+    category: progress
+    caption: "Stan na koniec każdego tygodnia od startu strony zapisów: teraz 312, cel na premierę to 500."
+    pinned: true
+    order: 1
+  - file: szablon-maila.svg
+    title: Szablon maila
+    category: drawing
+    caption: Jedna kolumna, 600 px szerokości, jeden obrazek i jeden przycisk w mailu.
+    pinned: false
+    order: 2
+    tasks:
+      - maile-na-premiere

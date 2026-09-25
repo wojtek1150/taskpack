@@ -13,6 +13,7 @@
     "taskpack": "node packages/cli/dist/index.js",
     "tpk": "node packages/cli/dist/index.js",
     "build": "pnpm -r build",
+    "build:demo": "pnpm build && pnpm --filter @taskpack/web build:demo",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -21,6 +22,7 @@
     "kit:build": "pnpm build && node packages/cli/dist/index.js kit build",
     "start": "pnpm --filter @taskpack/server start",
     "test:e2e": "pnpm build && playwright test -c e2e/playwright.config.ts",
+    "test:e2e:demo": "pnpm build:demo && playwright test -c e2e/playwright.demo.config.ts",
     "kit:mcpb": "pnpm build && node scripts/build-mcpb.mjs"
   },
   "devDependencies": {

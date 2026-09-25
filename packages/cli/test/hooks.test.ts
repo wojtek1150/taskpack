@@ -21,7 +21,7 @@ describe('taskpack hook session-start', () => {
     const out = additionalContext(r.out);
     expect(out.hookEventName).toBe('SessionStart');
     expect(out.additionalContext).toContain('Workspace Taskpack');
-    expect(out.additionalContext).toContain('Witrynka 45%');
+    expect(out.additionalContext).toContain('Premiera Proof 45%');
     expect(out.additionalContext).toContain('Pytania do Ciebie');
     expect(estimateTokens(out.additionalContext)).toBeLessThanOrEqual(350);
     expect(existsSync(join(home, '.taskpack/hooks/s-1.json'))).toBe(true);
@@ -36,15 +36,17 @@ describe('taskpack hook session-start', () => {
 describe('taskpack hook prompt', () => {
   it('attaches the context pack for taskpack:// references', async () => {
     const home = await exampleWorkspace('pl');
-    const r = await hook('prompt', { cwd: home, prompt: 'pracujemy nad taskpack://witrynka, dopisz 2 todo' });
+    const r = await hook('prompt', { cwd: home, prompt: 'pracujemy nad taskpack://premiera-proof, dopisz 2 todo' });
     const out = additionalContext(r.out);
     expect(out.hookEventName).toBe('UserPromptSubmit');
-    expect(out.additionalContext).toContain('Kontekst Taskpack dla taskpack://witrynka');
-    expect(out.additionalContext).toContain('# Witrynka (taskpack://witrynka)');
+    expect(out.additionalContext).toContain('Kontekst Taskpack dla taskpack://premiera-proof');
+    expect(out.additionalContext).toContain('# Premiera Proof (taskpack://premiera-proof)');
     expect(out.additionalContext.length).toBeLessThan(10_000);
 
-    const task = additionalContext((await hook('prompt', { cwd: home, prompt: 'taskpack://witrynka/drzwiczki?' })).out);
-    expect(task.additionalContext).toContain('(taskpack://witrynka/drzwiczki)');
+    const task = additionalContext(
+      (await hook('prompt', { cwd: home, prompt: 'taskpack://premiera-proof/zakup-w-aplikacji?' })).out,
+    );
+    expect(task.additionalContext).toContain('(taskpack://premiera-proof/zakup-w-aplikacji)');
   });
 
   it('reports unknown references and ignores prompts without one', async () => {
@@ -57,7 +59,7 @@ describe('taskpack hook prompt', () => {
   it('marks included answers as delivered', async () => {
     const home = await exampleWorkspace('pl');
     answerQuestion({ home, actor: 'user' }, { question_id: 'q_7h2k', answer: 'Tak.' });
-    const out = additionalContext((await hook('prompt', { cwd: home, prompt: 'taskpack://finanse' })).out);
+    const out = additionalContext((await hook('prompt', { cwd: home, prompt: 'taskpack://biurko' })).out);
     expect(out.additionalContext).toContain('Tak.');
     expect(read(home, 'questions.md')).toMatch(/id:q_7h2k .*status:delivered/);
   });
@@ -79,28 +81,28 @@ describe('taskpack hook guard', () => {
 
   it('blocks deleting project files', async () => {
     const home = await exampleWorkspace('en');
-    const r = await guard(home, 'Bash', { command: 'rm projects/display-cabinet/todos.md' });
+    const r = await guard(home, 'Bash', { command: 'rm projects/proof-app/todos.md' });
     expect(r.code).toBe(2);
     expect(r.err).toMatch(/never deletes files in projects/);
-    expect((await guard(home, 'Bash', { command: 'git rm -r projects/home' })).code).toBe(2);
-    expect((await guard(home, 'Bash', { command: 'rm todos.md' }, join(home, 'projects/home'))).code).toBe(2);
+    expect((await guard(home, 'Bash', { command: 'git rm -r projects/japan-trip' })).code).toBe(2);
+    expect((await guard(home, 'Bash', { command: 'rm todos.md' }, join(home, 'projects/japan-trip'))).code).toBe(2);
     expect((await guard(home, 'Bash', { command: 'find projects -name "*.md" -delete' })).code).toBe(2);
   });
 
   it('blocks a Write that drops the frontmatter of a task', async () => {
     const home = await exampleWorkspace('en');
-    const file = join(home, 'projects/display-cabinet/tasks/doors.md');
+    const file = join(home, 'projects/proof-app/tasks/paywall.md');
     const r = await guard(home, 'Write', { file_path: file, content: '# Doors\n\nall new' });
     expect(r.code).toBe(2);
-    expect(r.err).toContain('projects/display-cabinet/tasks/doors.md has frontmatter');
+    expect(r.err).toContain('projects/proof-app/tasks/paywall.md has frontmatter');
   });
 
   it('allows normal work', async () => {
     const home = await exampleWorkspace('pl');
-    const todos = join(home, 'projects/witrynka/todos.md');
+    const todos = join(home, 'projects/premiera-proof/todos.md');
     for (const [tool, input] of [
       ['Edit', { file_path: todos, old_string: 'a', new_string: 'b' }],
-      ['Write', { file_path: todos, content: `${read(home, 'projects/witrynka/todos.md')}- [ ] x\n` }],
+      ['Write', { file_path: todos, content: `${read(home, 'projects/premiera-proof/todos.md')}- [ ] x\n` }],
       ['Bash', { command: 'cat .taskpack/activity.jsonl 2>/dev/null | tail -5' }],
       ['Bash', { command: 'git diff --stat' }],
       ['Read', { file_path: join(home, '.taskpack/activity.jsonl') }],
@@ -115,30 +117,34 @@ describe('taskpack hook guard', () => {
 describe('taskpack hook after-edit', () => {
   it('exits 2 with localized errors when an edit breaks the format', async () => {
     const home = await exampleWorkspace('pl');
-    const file = join(home, 'projects/witrynka/tasks/drzwiczki.md');
+    const file = join(home, 'projects/premiera-proof/tasks/zakup-w-aplikacji.md');
     writeFileSync(
       file,
-      read(home, 'projects/witrynka/tasks/drzwiczki.md').replace('status: in_progress', 'status: W toku'),
+      read(home, 'projects/premiera-proof/tasks/zakup-w-aplikacji.md').replace('status: in_progress', 'status: W toku'),
     );
     const r = await hook('after-edit', { cwd: home, tool_name: 'Edit', tool_input: { file_path: file } });
     expect(r.code).toBe(2);
-    expect(r.err).toContain('Plik projects/witrynka/tasks/drzwiczki.md łamie format Taskpack');
+    expect(r.err).toContain('Plik projects/premiera-proof/tasks/zakup-w-aplikacji.md łamie format Taskpack');
     expect(r.err).toMatch(/status: Nieprawidłowa opcja/);
   });
 
   it('records a valid edit as claude-code without rewriting the file', async () => {
     const home = await exampleWorkspace('pl');
-    const rel = 'projects/witrynka/todos.md';
+    const rel = 'projects/premiera-proof/todos.md';
     const edited = read(home, rel).replace('# Todo\n', '# Todo\n\n- [ ] Kupić kołki\n');
     writeFileSync(join(home, rel), edited);
     const r = await hook('after-edit', { cwd: home, tool_name: 'Write', tool_input: { file_path: join(home, rel) } });
     expect(r).toEqual({ code: 0, out: '', err: '' });
     // No rewrite, so Claude's view of the file stays current.
     expect(read(home, rel)).toBe(edited);
-    expect(readActivity(home).at(-1)).toMatchObject({ actor: 'claude-code', op: 'file.edit', project: 'witrynka' });
+    expect(readActivity(home).at(-1)).toMatchObject({
+      actor: 'claude-code',
+      op: 'file.edit',
+      project: 'premiera-proof',
+    });
 
     // The item is addressable right away by its implicit id; ticking it writes that same id.
-    const pack = JSON.parse((await taskpack(['pack', 'witrynka', '--json', '--home', home])).out);
+    const pack = JSON.parse((await taskpack(['pack', 'premiera-proof', '--json', '--home', home])).out);
     const id = pack.data.todos.open.find((t: { text: string }) => t.text === 'Kupić kołki')?.id;
     expect(id).toMatch(/^td_[a-z0-9]{6}$/);
     expect((await taskpack(['todo', 'done', id, '--home', home])).code).toBe(0);
@@ -164,12 +170,12 @@ describe('taskpack hook stop', () => {
     // Nothing changed yet: stopping is fine.
     expect(await hook('stop', { cwd: home, stop_hook_active: false })).toEqual({ code: 0, out: '', err: '' });
 
-    await taskpack(['--home', home, '--actor', 'claude-code', 'todo', 'add', 'witrynka', 'Kupić kołki']);
+    await taskpack(['--home', home, '--actor', 'claude-code', 'todo', 'add', 'premiera-proof', 'Kupić kołki']);
     const blocked = await hook('stop', { cwd: home, stop_hook_active: false });
     expect(blocked.code).toBe(0);
     const decision = JSON.parse(blocked.out) as { decision: string; reason: string };
     expect(decision.decision).toBe('block');
-    expect(decision.reason).toContain('(witrynka)');
+    expect(decision.reason).toContain('(premiera-proof)');
     expect(decision.reason).toContain('/taskpack-wrap');
 
     // Claude continues because of the hook: never block again in that loop.
@@ -182,8 +188,8 @@ describe('taskpack hook stop', () => {
     const home = await exampleWorkspace('pl');
     await hook('session-start', { cwd: home });
     const env = { TASKPACK_HOME: home, TASKPACK_ACTOR: 'claude-code' };
-    await taskpack(['todo', 'add', 'witrynka', 'Kupić kołki'], { env });
-    await taskpack(['session', 'log', 'witrynka', '--summary', 'Dopisane kołki.'], { env });
+    await taskpack(['todo', 'add', 'premiera-proof', 'Kupić kołki'], { env });
+    await taskpack(['session', 'log', 'premiera-proof', '--summary', 'Dopisane kołki.'], { env });
     expect((await hook('stop', { cwd: home, stop_hook_active: false })).out).toBe('');
   });
 });

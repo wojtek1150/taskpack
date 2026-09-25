@@ -59,7 +59,7 @@ describe('palette search folding', () => {
 
 describe('gallery tiles', () => {
   it('shows drawings, SVGs and PDFs whole; photos fill the tile', () => {
-    expect(showWhole({ file: 'wymiary.svg', category: 'visualization' })).toBe(true);
+    expect(showWhole({ file: 'paywall.svg', category: 'visualization' })).toBe(true);
     expect(showWhole({ file: 'plan.png', category: 'drawing' })).toBe(true);
     expect(showWhole({ file: 'oferta.pdf', category: 'other' })).toBe(true);
     expect(showWhole({ file: 'postep.jpg', category: 'progress' })).toBe(false);

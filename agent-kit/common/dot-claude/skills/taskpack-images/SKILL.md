@@ -1,7 +1,7 @@
 ---
 name: taskpack-images
 description: 'Add, caption, pin and link Taskpack project images (images/images.yaml, attach_image, taskpack image add; max 5 current). Use for obraz, zdjęcie, rysunek, szkic, image, photo, sketch, pin, podpis.'
-when_to_use: 'The user talks about project pictures: "dodaj to zdjęcie do witrynki", "attach this sketch", "przypnij render", "which images are current", "podpisz zdjęcie", "dodaj obraz do taska", "odepnij stary szkic", "what does the drawing show", a new file dropped into projects/<slug>/images/.'
+when_to_use: 'The user talks about project pictures: "dodaj ten zrzut do Proof", "attach this sketch", "przypnij render", "which images are current", "podpisz zdjęcie", "dodaj obraz do taska", "odepnij stary szkic", "what does the drawing show", a new file dropped into projects/<slug>/images/.'
 ---
 
 # Taskpack images
@@ -35,14 +35,14 @@ Writing files directly (no CLI/MCP)? Copy the file into `images/` with a lowerca
 
 ```yaml
 images:
-  - file: render-front.svg        # plain file name inside images/, must exist
-    title: Render — front         # short, ≤ 200 chars
+  - file: paywall.svg             # plain file name inside images/, must exist
+    title: Paywall                # short, ≤ 200 chars
     category: visualization       # visualization | drawing | inspiration | progress | other
-    caption: "Widok z przodu: dwoje drzwi przeszklonych, 3 półki, nóżki 7 cm."
+    caption: "Ekran jednorazowego zakupu: trzy korzyści, cena, „Przywróć zakupy” i „Może później”."
     pinned: true                  # current image, sent to agents with the pack
     pinned_order: 1               # position among the current images (1 = big tile, first for agents)
     order: 1                      # display order among all images
-    tasks: [drzwiczki]            # task slugs this image belongs to
+    tasks: [zakup-w-aplikacji]    # task slugs this image belongs to
     created_by: claude            # who added it
     created: 2026-09-22T21:40:00+02:00
 ```
@@ -72,7 +72,7 @@ Write the caption for an agent that cannot see the picture: what it shows and th
 
 ## Linking images to tasks
 
-Add the task slug to `tasks:` of the image entry (e.g. `tasks: [drzwiczki, polki]`), or pass `task` to `attach_image` / `--task` to `image add`. `get_task` then includes the image. Never add image references to the task file.
+Add the task slug to `tasks:` of the image entry (e.g. `tasks: [zakup-w-aplikacji, ekrany-powitalne]`), or pass `task` to `attach_image` / `--task` to `image add`. `get_task` then includes the image. Never add image references to the task file.
 
 ## A new file appeared in images/
 

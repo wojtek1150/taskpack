@@ -49,9 +49,9 @@ describe('read endpoints', () => {
     const board = res.body as BoardView;
     expect(board.columns.map((c) => c.status)).toEqual(['inbox', 'todo', 'in_progress', 'waiting']);
     const doing = board.columns[2]?.cards.map((c) => c.id);
-    expect(doing).toEqual(['witrynka/drzwiczki', 'nauka-rust/rozdzial-8', 'blog-i-taskpack/migracja-bloga']);
-    const doors = board.columns[2]?.cards[0];
-    expect(doors).toMatchObject({
+    expect(doing).toEqual(['premiera-proof/zakup-w-aplikacji', 'japonski/genki-lekcja-5', 'newsletter/strona-zapisow']);
+    const paywall = board.columns[2]?.cards[0];
+    expect(paywall).toMatchObject({
       weight: 4,
       stepsDone: 1,
       stepsTotal: 3,
@@ -59,10 +59,10 @@ describe('read endpoints', () => {
       agent: 'claude',
       due: '2026-09-28',
     });
-    const refund = board.columns[3]?.cards.find((c) => c.slug === 'zwrot-sluchawek');
-    expect(refund?.hasQuestion).toBe(true);
-    expect(board.focus.question?.id).toBe('q_7h2k');
-    expect(board.focus.next).toMatchObject({ task: { slug: 'drzwiczki' }, step: 'Wyfrezować wpust — prawe drzwiczki' });
+    const frame = board.columns[3]?.cards.find((c) => c.slug === 'stelaz');
+    expect(frame?.hasQuestion).toBe(true);
+    expect(board.focus.question?.id).toBe('q_n4vd');
+    expect(board.focus.next).toMatchObject({ task: { slug: 'zakup-w-aplikacji' }, step: 'Przywracanie zakupów' });
     expect(board.focus.session?.project.slug).toBeTruthy();
     expect(board.issues).toEqual([]);
   });
@@ -70,44 +70,47 @@ describe('read endpoints', () => {
   it('GET /api/projects lists projects in order with sidebar counts', async () => {
     const { agent } = setup();
     const view = (await agent.get('/api/projects').expect(200)).body as ProjectsView;
-    expect(view.projects[0]).toMatchObject({ slug: 'witrynka', pinned: 5, openTasks: 3 });
+    expect(view.projects[0]).toMatchObject({ slug: 'premiera-proof', pinned: 5, openTasks: 3 });
     expect(view.projects[0]?.cover).toHaveLength(3);
-    expect(view.sidebar.find((p) => p.slug === 'witrynka')?.openTasks).toBe(3);
+    expect(view.sidebar.find((p) => p.slug === 'premiera-proof')?.openTasks).toBe(3);
   });
 
   it('GET /api/projects/:slug returns summary, todos, images and the timeline', async () => {
     const { agent } = setup();
-    const p = (await agent.get('/api/projects/witrynka').expect(200)).body as ProjectView;
-    expect(p.summary?.now).toMatch(/^Wpust/);
+    const p = (await agent.get('/api/projects/premiera-proof').expect(200)).body as ProjectView;
+    expect(p.summary?.now).toMatch(/^Przywracanie zakupów/);
     expect(p.todos[0]).toMatchObject({ id: 'td_w1gl', by: 'claude', done: false });
     expect(p.images.filter((i) => i.pinned)).toHaveLength(5);
     expect(p.images[0]).toMatchObject({ placeholder: false, exists: true });
     expect(p.timeline[0]?.kind).toBe('session');
-    expect(p.tasks.at(-1)).toMatchObject({ slug: 'korpus', status: 'done' });
+    expect(p.tasks.at(-1)).toMatchObject({ slug: 'minutniki', status: 'done' });
   });
 
   it('GET task returns steps with the next marker, notes with metadata and the pack', async () => {
     const { agent } = setup();
-    const t = (await agent.get('/api/projects/witrynka/tasks/drzwiczki').expect(200)).body as TaskView;
+    const t = (await agent.get('/api/projects/premiera-proof/tasks/zakup-w-aplikacji').expect(200)).body as TaskView;
     expect(t.steps.map((s) => s.next)).toEqual([false, true, false]);
-    expect(t.decisions[0]).toMatchObject({ text: 'Szkło hartowane 4 mm, nie 3 mm.', by: 'claude' });
-    expect(t.pack.markdown).toContain('taskpack://witrynka/drzwiczki');
+    expect(t.decisions[0]).toMatchObject({
+      text: expect.stringMatching(/^Jednorazowy zakup za 12,99 €/),
+      by: 'claude',
+    });
+    expect(t.pack.markdown).toContain('taskpack://premiera-proof/zakup-w-aplikacji');
     expect(t.images.length).toBeGreaterThan(0);
   });
 
   it('returns 404 JSON for unknown projects and endpoints', async () => {
     const { agent } = setup();
     expect((await agent.get('/api/projects/nope').expect(404)).body.error.code).toBe('not_found');
-    await agent.get('/api/projects/witrynka/tasks/nope').expect(404);
+    await agent.get('/api/projects/premiera-proof/tasks/nope').expect(404);
     await agent.get('/api/nothing').expect(404);
   });
 
   it('serves questions, activity, search and config', async () => {
     const { agent } = setup();
     const questions = (await agent.get('/api/questions').expect(200)).body;
-    expect(questions.map((q: { id: string }) => q.id)).toEqual(['q_7h2k', 'q_3m9p']);
+    expect(questions.map((q: { id: string }) => q.id)).toEqual(['q_7h2k', 'q_n4vd', 'q_3m9p']);
     expect((await agent.get('/api/activity').expect(200)).body).toEqual([]);
-    const hits = (await agent.get('/api/search').query({ q: 'szkło' }).expect(200)).body;
+    const hits = (await agent.get('/api/search').query({ q: 'półka' }).expect(200)).body;
     expect(hits.length).toBeGreaterThan(0);
     const config = (await agent.get('/api/config').expect(200)).body;
     expect(config).toMatchObject({ lang: 'pl', tools: { set_summary: true } });
@@ -126,13 +129,14 @@ describe('read endpoints', () => {
 describe('write endpoints (actor user, through core)', () => {
   it('adds, edits and toggles todos', async () => {
     const { agent, read } = setup();
-    const added = (await agent.post('/api/projects/witrynka/todos').send({ text: 'Kołki 5 mm' }).expect(201)).body;
+    const added = (await agent.post('/api/projects/premiera-proof/todos').send({ text: 'Kołki 5 mm' }).expect(201))
+      .body;
     const id = added.added[0].id as string;
-    expect(read('projects/witrynka/todos.md')).toMatch(new RegExp(`- \\[ \\] Kołki 5 mm <!-- id:${id} by:user`));
+    expect(read('projects/premiera-proof/todos.md')).toMatch(new RegExp(`- \\[ \\] Kołki 5 mm <!-- id:${id} by:user`));
     await agent.patch(`/api/todos/${id}`).send({ text: 'Kołki 6 mm' }).expect(200);
     await agent.patch(`/api/todos/${id}`).send({ done: true }).expect(200);
-    expect(read('projects/witrynka/todos.md')).toMatch(new RegExp(`- \\[x\\] Kołki 6 mm <!-- id:${id} by:user`));
-    const p = (await agent.get('/api/projects/witrynka').expect(200)).body as ProjectView;
+    expect(read('projects/premiera-proof/todos.md')).toMatch(new RegExp(`- \\[x\\] Kołki 6 mm <!-- id:${id} by:user`));
+    const p = (await agent.get('/api/projects/premiera-proof').expect(200)).body as ProjectView;
     expect(p.todos.find((t) => t.id === id)).toMatchObject({ done: true, text: 'Kołki 6 mm' });
     await agent.patch('/api/todos/td_nope').send({ done: true }).expect(404);
   });
@@ -140,44 +144,54 @@ describe('write endpoints (actor user, through core)', () => {
   it('creates and updates tasks, moves them and their steps', async () => {
     const { agent, read } = setup();
     const created = (
-      await agent.post('/api/projects/witrynka/tasks').send({ title: 'Zawiasy', weight: 2, status: 'todo' }).expect(201)
+      await agent
+        .post('/api/projects/premiera-proof/tasks')
+        .send({ title: 'Zawiasy', weight: 2, status: 'todo' })
+        .expect(201)
     ).body;
-    expect(created.ref).toBe('taskpack://witrynka/zawiasy');
+    expect(created.ref).toBe('taskpack://premiera-proof/zawiasy');
     await agent
-      .patch('/api/projects/witrynka/tasks/zawiasy')
+      .patch('/api/projects/premiera-proof/tasks/zawiasy')
       .send({ add_steps: ['Kupić', 'Zamontować'], note: 'Mosiężne', decision: 'Nakładane' })
       .expect(200);
-    expect(read('projects/witrynka/tasks/zawiasy.md')).toMatch(
+    expect(read('projects/premiera-proof/tasks/zawiasy.md')).toMatch(
       /## Kroki[\s\S]*Kupić[\s\S]*## Notatki[\s\S]*## Decyzje/,
     );
-    await agent.post('/api/projects/witrynka/tasks/zawiasy/steps/move').send({ step: 2, to: 1 }).expect(200);
-    const t = (await agent.get('/api/projects/witrynka/tasks/zawiasy').expect(200)).body as TaskView;
+    await agent.post('/api/projects/premiera-proof/tasks/zawiasy/steps/move').send({ step: 2, to: 1 }).expect(200);
+    const t = (await agent.get('/api/projects/premiera-proof/tasks/zawiasy').expect(200)).body as TaskView;
     expect(t.steps.map((s) => s.text)).toEqual(['Zamontować', 'Kupić']);
 
-    await agent.post('/api/projects/witrynka/tasks/zawiasy/move').send({ status: 'in_progress', index: 0 }).expect(200);
+    await agent
+      .post('/api/projects/premiera-proof/tasks/zawiasy/move')
+      .send({ status: 'in_progress', index: 0 })
+      .expect(200);
     const board = (await agent.get('/api/board').expect(200)).body as BoardView;
-    expect(board.columns[2]?.cards[0]?.id).toBe('witrynka/zawiasy');
-    await agent.patch('/api/projects/witrynka/tasks/zawiasy').send({ weight: 9 }).expect(400);
+    expect(board.columns[2]?.cards[0]?.id).toBe('premiera-proof/zawiasy');
+    await agent.patch('/api/projects/premiera-proof/tasks/zawiasy').send({ weight: 9 }).expect(400);
   });
 
   it('sets the summary and adds notes', async () => {
     const { agent, read } = setup();
-    await agent.put('/api/projects/witrynka/summary').send({ now: 'Szkło zamówione' }).expect(200);
-    expect(read('projects/witrynka/project.md')).toContain('- **Teraz:** Szkło zamówione');
-    const note = (await agent.post('/api/projects/witrynka/notes').send({ body: 'Deski schną' }).expect(201)).body;
+    await agent.put('/api/projects/premiera-proof/summary').send({ now: 'Szkło zamówione' }).expect(200);
+    expect(read('projects/premiera-proof/project.md')).toContain('- **Teraz:** Szkło zamówione');
+    const note = (await agent.post('/api/projects/premiera-proof/notes').send({ body: 'Deski schną' }).expect(201))
+      .body;
     expect(read(note.file)).toMatch(/author: user[\s\S]*Deski schną/);
   });
 
   it('pins images up to the limit with a friendly error', async () => {
     const { agent, read } = setup();
-    const res = await agent.patch('/api/projects/witrynka/images/render-bok.svg').send({ pinned: true }).expect(400);
+    const res = await agent
+      .patch('/api/projects/premiera-proof/images/ikona-warianty.svg')
+      .send({ pinned: true })
+      .expect(400);
     expect(res.body.error.message).toMatch(/najwyżej 5/);
-    await agent.patch('/api/projects/witrynka/images/render-front.svg').send({ pinned: false }).expect(200);
+    await agent.patch('/api/projects/premiera-proof/images/ekran-glowny.svg').send({ pinned: false }).expect(200);
     await agent
-      .patch('/api/projects/witrynka/images/render-bok.svg')
-      .send({ pinned: true, caption: 'Bok', tasks: ['drzwiczki'] })
+      .patch('/api/projects/premiera-proof/images/ikona-warianty.svg')
+      .send({ pinned: true, caption: 'Bok', tasks: ['zakup-w-aplikacji'] })
       .expect(200);
-    expect(read('projects/witrynka/images/images.yaml')).toMatch(/file: render-bok.svg[\s\S]*?pinned: true/);
+    expect(read('projects/premiera-proof/images/images.yaml')).toMatch(/file: ikona-warianty.svg[\s\S]*?pinned: true/);
   });
 
   it('answers questions and switches tools and language', async () => {
@@ -196,7 +210,7 @@ describe('write endpoints (actor user, through core)', () => {
   it('refuses cross-origin writes and foreign hosts', async () => {
     const { agent } = setup();
     await agent
-      .post('/api/projects/witrynka/todos')
+      .post('/api/projects/premiera-proof/todos')
       .set('Origin', 'https://evil.example')
       .send({ text: 'x' })
       .expect(403);
@@ -207,12 +221,12 @@ describe('write endpoints (actor user, through core)', () => {
 describe('image files', () => {
   it('serves files from images/ read-only and blocks traversal', async () => {
     const { agent } = setup();
-    const res = await agent.get('/api/files/witrynka/images/wymiary.svg').expect(200);
+    const res = await agent.get('/api/files/premiera-proof/images/paywall.svg').expect(200);
     expect(res.headers['content-type']).toMatch(/svg/);
     expect(res.headers['content-security-policy']).toContain('sandbox');
-    await agent.get('/api/files/witrynka/images/..%2Fproject.md').expect(400);
+    await agent.get('/api/files/premiera-proof/images/..%2Fproject.md').expect(400);
     await agent.get('/api/files/..%2F..%2Fwitrynka/images/x.svg').expect(400);
-    await agent.get('/api/files/witrynka/images/nope.png').expect(404);
+    await agent.get('/api/files/premiera-proof/images/nope.png').expect(404);
   });
 });
 
@@ -273,15 +287,19 @@ describe('watcher → SSE', () => {
   it('pushes an event within 1 s when a file is edited outside Taskpack', async () => {
     const { g, home, agent } = setup({ watch: true });
     await g.ready;
-    await agent.get('/api/projects/witrynka').expect(200); // warm the cache
+    await agent.get('/api/projects/premiera-proof').expect(200); // warm the cache
     const sse = await listen(g);
     const started = Date.now();
-    appendFileSync(join(home, 'projects/witrynka/todos.md'), '- [ ] Dopisane w edytorze\n');
+    appendFileSync(join(home, 'projects/premiera-proof/todos.md'), '- [ ] Dopisane w edytorze\n');
     const event = await sse.next();
     expect(Date.now() - started).toBeLessThan(1000);
-    expect(event).toMatchObject({ type: 'changed', projects: ['witrynka'], files: ['projects/witrynka/todos.md'] });
+    expect(event).toMatchObject({
+      type: 'changed',
+      projects: ['premiera-proof'],
+      files: ['projects/premiera-proof/todos.md'],
+    });
     expect(event.activity).toEqual([]);
-    const p = (await agent.get('/api/projects/witrynka').expect(200)).body as ProjectView;
+    const p = (await agent.get('/api/projects/premiera-proof').expect(200)).body as ProjectView;
     expect(p.todos.some((t) => t.text === 'Dopisane w edytorze')).toBe(true);
     sse.stop();
   });
@@ -290,13 +308,14 @@ describe('watcher → SSE', () => {
     const { g, home, agent } = setup({ watch: true });
     await g.ready;
     const sse = await listen(g);
-    await agent.post('/api/projects/witrynka/tasks/drzwiczki/seen').expect(204);
+    await agent.post('/api/projects/premiera-proof/tasks/zakup-w-aplikacji/seen').expect(204);
     await new Promise((r) => setTimeout(r, 400));
-    appendFileSync(join(home, 'projects/witrynka/todos.md'), '- [ ] Po otwarciu taska\n');
+    appendFileSync(join(home, 'projects/premiera-proof/todos.md'), '- [ ] Po otwarciu taska\n');
     // fsevents may still replay the copy of the example workspace; wait for our edit.
     const seen: string[] = [];
-    for (let i = 0; i < 4 && !seen.includes('projects/witrynka/todos.md'); i++) seen.push(...(await sse.next()).files);
-    expect(seen).toContain('projects/witrynka/todos.md');
+    for (let i = 0; i < 4 && !seen.includes('projects/premiera-proof/todos.md'); i++)
+      seen.push(...(await sse.next()).files);
+    expect(seen).toContain('projects/premiera-proof/todos.md');
     expect(seen.filter((f) => f.startsWith('.taskpack'))).toEqual([]);
     sse.stop();
   });
@@ -305,14 +324,14 @@ describe('watcher → SSE', () => {
     const { g, home } = setup({ watch: true });
     await g.ready;
     const sse = await listen(g);
-    addTodos({ home, actor: 'claude-code' }, { project: 'witrynka', items: ['Klej', 'Kołki'] });
+    addTodos({ home, actor: 'claude-code' }, { project: 'premiera-proof', items: ['Klej', 'Kołki'] });
     const event = await sse.next();
-    expect(event.projects).toEqual(['witrynka']);
+    expect(event.projects).toEqual(['premiera-proof']);
     expect(event.activity).toEqual([
       expect.objectContaining({
         actor: 'claude-code',
         op: 'todo.add',
-        project: 'witrynka',
+        project: 'premiera-proof',
         count: 2,
         summary: '+2 todo',
       }),

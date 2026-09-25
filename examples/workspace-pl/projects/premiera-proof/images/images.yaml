@@ -1,0 +1,60 @@
+# Obrazy projektu. pinned: true = „aktualne” (max 5), trafiają do agenta w context packu.
+images:
+  - file: ekran-glowny.svg
+    title: Ekran główny — trwający wypiek
+    category: visualization
+    caption: "Makieta hi-fi: pierścień fermentacji, następne dokarmianie i temperatura w kuchni."
+    pinned: true
+    order: 1
+  - file: paywall.svg
+    title: Paywall
+    category: visualization
+    caption: "Ekran jednorazowego zakupu: trzy korzyści, cena, „Przywróć zakupy” i „Może później”."
+    pinned: true
+    order: 2
+    tasks:
+      - zakup-w-aplikacji
+  - file: sciezka-zakupu.svg
+    title: Ścieżka zakupu
+    category: drawing
+    caption: "Stany StoreKit 2: pobranie produktów, zakup, oczekiwanie (Ask to Buy), odblokowane, przywracanie."
+    pinned: true
+    order: 3
+    tasks:
+      - zakup-w-aplikacji
+  - file: makiety-onboardingu.svg
+    title: Makiety onboardingu
+    category: drawing
+    caption: "Trzy szkicowe ekrany: powitanie, pierwszy zakwas, zgoda na powiadomienia."
+    pinned: true
+    order: 4
+    tasks:
+      - ekrany-powitalne
+  - file: moodboard.svg
+    title: Moodboard — ciepła kuchnia
+    category: inspiration
+    caption: "Brąz skórki, kremowa mąka i terakota; prawdziwe wypieki w miękkim dziennym świetle. Kierunek dla zrzutów do App Store."
+    pinned: true
+    order: 5
+    tasks:
+      - karta-app-store
+    created_by: chatgpt
+    created: 2026-09-17T19:30:00+02:00
+  - file: ikona-warianty.svg
+    title: Ikona — trzy kierunki
+    category: inspiration
+    caption: Bochenek, słoik z rosnącym zakwasem, pierścień minutnika. Słoik najlepiej czyta się w małym rozmiarze.
+    pinned: false
+    order: 6
+    tasks:
+      - karta-app-store
+    created_by: chatgpt
+    created: 2026-09-17T19:35:00+02:00
+  - file: beta-bez-awarii.svg
+    title: Beta — sesje bez awarii
+    category: progress
+    caption: Odsetek sesji bez awarii w kolejnych buildach TestFlight; build 12 naprawił błąd powiadomień.
+    pinned: false
+    order: 7
+    tasks:
+      - minutniki

@@ -1,0 +1,60 @@
+# Project images. pinned: true = "current" (max 5), sent to agents in the context pack.
+images:
+  - file: home-screen.svg
+    title: Home screen — active bake
+    category: visualization
+    caption: "Hi-fi mockup: the bulk fermentation ring, the next feeding and the kitchen temperature."
+    pinned: true
+    order: 1
+  - file: paywall.svg
+    title: Paywall
+    category: visualization
+    caption: "One-time purchase screen: three benefits, the price, Restore purchases and \"Maybe later\"."
+    pinned: true
+    order: 2
+    tasks:
+      - paywall
+  - file: purchase-flow.svg
+    title: Purchase flow
+    category: drawing
+    caption: "StoreKit 2 states: load products, purchase, pending (Ask to Buy), unlocked, restore."
+    pinned: true
+    order: 3
+    tasks:
+      - paywall
+  - file: onboarding-wireframes.svg
+    title: Onboarding wireframes
+    category: drawing
+    caption: "Three low-fi screens: welcome, first starter, notification permission."
+    pinned: true
+    order: 4
+    tasks:
+      - onboarding
+  - file: moodboard.svg
+    title: Moodboard — warm kitchen
+    category: inspiration
+    caption: "Crust brown, flour cream and terracotta; real bakes in soft daylight. Direction for the listing screenshots."
+    pinned: true
+    order: 5
+    tasks:
+      - app-store-listing
+    created_by: chatgpt
+    created: 2026-09-17T19:30:00+02:00
+  - file: app-icon-options.svg
+    title: App icon — three directions
+    category: inspiration
+    caption: Loaf, a jar with a rising starter, a timer ring. The jar reads best at small sizes.
+    pinned: false
+    order: 6
+    tasks:
+      - app-store-listing
+    created_by: chatgpt
+    created: 2026-09-17T19:35:00+02:00
+  - file: beta-crash-free.svg
+    title: Beta — crash-free sessions
+    category: progress
+    caption: Crash-free sessions per TestFlight build; build 12 fixed the notification crash.
+    pinned: false
+    order: 7
+    tasks:
+      - timer-engine

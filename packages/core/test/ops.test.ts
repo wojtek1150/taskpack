@@ -31,9 +31,9 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
 
   it('addTodos inserts after the last open todo, touching only new lines', () => {
     const home = tempWorkspace(lang);
-    const file = `projects/${n.cabinet}/todos.md`;
+    const file = `projects/${n.app}/todos.md`;
     const before = snapshot(home);
-    const result = addTodos(ctxFor(home), { project: `taskpack://${n.cabinet}`, items: ['Klej', 'Kołki 5 mm'] });
+    const result = addTodos(ctxFor(home), { project: `taskpack://${n.app}`, items: ['Klej', 'Kołki 5 mm'] });
     expect(result.added.map((t) => t.text)).toEqual(['Klej', 'Kołki 5 mm']);
     expect(changedFiles(before, snapshot(home))).toEqual([file]);
     const diff = lineDiff(before.get(file) ?? '', read(home, file));
@@ -44,7 +44,7 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
     const lines = read(home, file).split('\n');
     expect(lines.findIndex((l) => l.includes('Kołki'))).toBeLessThan(lines.findIndex((l) => l.startsWith('- [x]')));
     const entry = readActivity(home).at(-1);
-    expect(entry).toMatchObject({ actor: 'claude-code', op: 'todo.add', project: n.cabinet, count: 2 });
+    expect(entry).toMatchObject({ actor: 'claude-code', op: 'todo.add', project: n.app, count: 2 });
     expect(entry?.summary).toBe('+2 todo');
     expectValid(home);
   });
@@ -86,29 +86,29 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
   it('is idempotent per actor and request id', () => {
     const home = tempWorkspace(lang);
     const ctx = ctxFor(home, 'claude', { requestId: 'req-1' });
-    const first = addTodos(ctx, { project: n.cabinet, text: 'Raz' });
+    const first = addTodos(ctx, { project: n.app, text: 'Raz' });
     const snap = snapshot(home);
-    const again = addTodos(ctx, { project: n.cabinet, text: 'Raz' });
+    const again = addTodos(ctx, { project: n.app, text: 'Raz' });
     expect(again.duplicate).toBe(true);
     expect(again.added).toEqual(first.added);
     expect(changedFiles(snap, snapshot(home))).toEqual([]);
     expect(readActivity(home).filter((e) => e.request_id === 'req-1')).toHaveLength(1);
     // Another actor with the same id is a different request.
     expect(
-      addTodos(ctxFor(home, 'chatgpt', { requestId: 'req-1' }), { project: n.cabinet, text: 'Raz' }).duplicate,
+      addTodos(ctxFor(home, 'chatgpt', { requestId: 'req-1' }), { project: n.app, text: 'Raz' }).duplicate,
     ).toBeUndefined();
     // After 24 h the id can be reused.
     const later = new Date(Date.now() + 25 * 3600_000);
-    const replay = addTodos({ ...ctx, now: () => later }, { project: n.cabinet, text: 'Raz' });
+    const replay = addTodos({ ...ctx, now: () => later }, { project: n.app, text: 'Raz' });
     expect(replay.duplicate).toBeUndefined();
   });
 
   it('toggleTodo ticks and unticks with a done timestamp', () => {
     const home = tempWorkspace(lang);
-    const file = `projects/${n.cabinet}/todos.md`;
+    const file = `projects/${n.app}/todos.md`;
     const before = read(home, file);
     const open = loadWorkspace(home)
-      .projects.find((p) => p.slug === n.cabinet)
+      .projects.find((p) => p.slug === n.app)
       ?.todos.find((t) => !t.done);
     const id = open?.meta?.id ?? '';
     expect(toggleTodo(ctxFor(home), { todo_id: id })).toMatchObject({ id, done: true, changed: true });
@@ -124,32 +124,32 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
   it('createTask writes frontmatter and sections in the workspace language', () => {
     const home = tempWorkspace(lang);
     const r = createTask(ctxFor(home), {
-      project: n.cabinet,
+      project: n.app,
       title: 'Zawiasy — montaż',
       description: 'Nakładane.',
       weight: 4,
       due: '2026-10-05',
       steps: ['Puszki', 'Regulacja'],
     });
-    expect(r).toEqual({ ref: `taskpack://${n.cabinet}/zawiasy-montaz`, id: 'zawiasy-montaz' });
-    const text = read(home, `projects/${n.cabinet}/tasks/zawiasy-montaz.md`);
+    expect(r).toEqual({ ref: `taskpack://${n.app}/zawiasy-montaz`, id: 'zawiasy-montaz' });
+    const text = read(home, `projects/${n.app}/tasks/zawiasy-montaz.md`);
     const h = lang === 'pl' ? ['## Opis', '## Kroki'] : ['## Description', '## Steps'];
     expect(text).toContain(`${h[0]}\n\nNakładane.\n\n${h[1]}\n\n- [ ] Puszki <!-- id:st_`);
     expect(text).toMatch(
       /^---\ntitle: Zawiasy — montaż\nstatus: inbox\nweight: 4\ndue: 2026-10-05\ncreated: \S+\ncreated_by: claude-code\n---\n/,
     );
-    expect(createTask(ctxFor(home), { project: n.cabinet, title: 'Zawiasy — montaż' }).id).toBe('zawiasy-montaz-2');
+    expect(createTask(ctxFor(home), { project: n.app, title: 'Zawiasy — montaż' }).id).toBe('zawiasy-montaz-2');
     expectValid(home);
-    expect(() => createTask(ctxFor(home), { project: n.cabinet, title: 'X', weight: 9 })).toThrow(/weight/);
+    expect(() => createTask(ctxFor(home), { project: n.app, title: 'X', weight: 9 })).toThrow(/weight/);
     expect(() => createTask(ctxFor(home), { project: 'nope', title: 'X' })).toThrow(/not found/);
   });
 
   it('updateTask changes fields, steps, notes and decisions in place', () => {
     const home = tempWorkspace(lang);
-    const file = `projects/${n.cabinet}/tasks/${n.doors}.md`;
+    const file = `projects/${n.app}/tasks/${n.paywall}.md`;
     const before = read(home, file);
     const r = updateTask(ctxFor(home), {
-      task: `${n.cabinet}/${n.doors}`,
+      task: `${n.app}/${n.paywall}`,
       status: 'waiting',
       weight: 5,
       check_steps: [2],
@@ -175,40 +175,38 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
 
   it('updateTask adds a missing section in canonical order and sets done_at', () => {
     const home = tempWorkspace(lang);
-    const file = `projects/${n.cabinet}/tasks/${n.finish}.md`;
-    updateTask(ctxFor(home), { task: `${n.cabinet}/${n.finish}`, note: 'Próbka wyschła', status: 'done' });
+    const file = `projects/${n.app}/tasks/${n.listing}.md`;
+    updateTask(ctxFor(home), { task: `${n.app}/${n.listing}`, note: 'Próbka wyschła', status: 'done' });
     const text = read(home, file);
     const [notes, decisions] = lang === 'pl' ? ['## Notatki', '## Decyzje'] : ['## Notes', '## Decisions'];
     expect(text.indexOf(notes)).toBeGreaterThan(0);
     expect(text.indexOf(notes)).toBeLessThan(text.indexOf(decisions));
     expect(text).toMatch(/\ndone_at: \S+\n/);
     updateTask(ctxFor(home), {
-      task: `${n.cabinet}/${n.finish}`,
+      task: `${n.app}/${n.listing}`,
       status: 'todo',
       description: 'Nowy opis.\n\nDruga linia.',
     });
     expect(read(home, file)).not.toContain('done_at');
     expect(
       loadWorkspace(home)
-        .projects.find((p) => p.slug === n.cabinet)
-        ?.tasks.find((t) => t.slug === n.finish)?.description,
+        .projects.find((p) => p.slug === n.app)
+        ?.tasks.find((t) => t.slug === n.listing)?.description,
     ).toBe('Nowy opis.\n\nDruga linia.');
     expectValid(home);
-    expect(() => updateTask(ctxFor(home), { task: `${n.cabinet}/${n.finish}`, check_steps: ['st_nope'] })).toThrow(
-      /step/,
-    );
-    expect(() => updateTask(ctxFor(home), { task: n.cabinet })).toThrow(/not a task/);
-    expect(() => updateTask(ctxFor(home), { task: `${n.cabinet}/${n.finish}`, description: '## Hack' })).toThrow(
+    expect(() => updateTask(ctxFor(home), { task: `${n.app}/${n.listing}`, check_steps: ['st_nope'] })).toThrow(/step/);
+    expect(() => updateTask(ctxFor(home), { task: n.app })).toThrow(/not a task/);
+    expect(() => updateTask(ctxFor(home), { task: `${n.app}/${n.listing}`, description: '## Hack' })).toThrow(
       /heading/,
     );
   });
 
   it('setSummary replaces only the summary section, keeping omitted labels', () => {
     const home = tempWorkspace(lang);
-    const file = `projects/${n.cabinet}/project.md`;
+    const file = `projects/${n.app}/project.md`;
     const before = read(home, file);
-    const r = setSummary(ctxFor(home), { project: n.cabinet, now: 'Szyba', blocker: '' });
-    expect(r.previous).toContain('4 mm');
+    const r = setSummary(ctxFor(home), { project: n.app, now: 'Szyba', blocker: '' });
+    expect(r.previous).toContain('Paid Apps');
     const after = read(home, file);
     const diff = lineDiff(before, after);
     const [now, blocker] = lang === 'pl' ? ['Teraz', 'Bloker'] : ['Now', 'Blocker'];
@@ -217,7 +215,7 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
     expect(after).toContain(`- **${now}:** Szyba\n`);
     expect(after).not.toContain(`**${blocker}:**`);
     expect(after.slice(0, after.indexOf('\n## '))).toBe(before.slice(0, before.indexOf('\n## ')));
-    const summary = loadWorkspace(home).projects.find((p) => p.slug === n.cabinet)?.summary;
+    const summary = loadWorkspace(home).projects.find((p) => p.slug === n.app)?.summary;
     expect(summary).toMatchObject({ now: 'Szyba', by: 'claude-code' });
     expect(summary?.next).toBeTruthy();
     expect(summary?.body).toMatch(/\S/);
@@ -242,8 +240,8 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
     const home = tempWorkspace(lang);
     const before = read(home, 'questions.md');
     const { question_id } = askUser(ctxFor(home), {
-      project: n.cabinet,
-      task: n.doors,
+      project: n.app,
+      task: n.paywall,
       question: 'Kolor oleju?',
       context: 'Dwie próbki.',
       options: ['Bezbarwny', 'Orzech'],
@@ -251,7 +249,7 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
     expect(question_id).toMatch(/^q_/);
     expect(read(home, 'questions.md').startsWith(before.trimEnd())).toBe(true);
     let q = loadWorkspace(home).questions.find((x) => x.id === question_id);
-    expect(q).toMatchObject({ status: 'open', project: n.cabinet, task: n.doors, context: 'Dwie próbki.' });
+    expect(q).toMatchObject({ status: 'open', project: n.app, task: n.paywall, context: 'Dwie próbki.' });
     expect(q?.options).toEqual(['Bezbarwny', 'Orzech']);
     answerQuestion(ctxFor(home, 'user'), { question_id, answer: 'Bezbarwny.' });
     q = loadWorkspace(home).questions.find((x) => x.id === question_id);
@@ -261,31 +259,31 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
       ['user', 'question.answer'],
     ]);
     expectValid(home);
-    expect(() => askUser(ctxFor(home), { project: n.cabinet, task: 'nope', question: 'X?' })).toThrow(/not found/);
+    expect(() => askUser(ctxFor(home), { project: n.app, task: 'nope', question: 'X?' })).toThrow(/not found/);
   });
 
   it('logSession derives the change list from the activity log', () => {
     const home = tempWorkspace(lang);
     const ctx = ctxFor(home);
-    addTodos(ctx, { project: n.cabinet, items: ['A', 'B'] });
-    updateTask(ctx, { task: `${n.cabinet}/${n.doors}`, check_steps: [2], decision: 'D' });
-    setSummary(ctx, { project: n.cabinet, now: 'X' });
-    addTodos(ctxFor(home, 'chatgpt'), { project: n.cabinet, text: 'Not mine' });
-    const r = logSession(ctx, { project: n.cabinet, summary: 'Sesja.\nSzczegóły.', changes: ['+2 todo', 'extra'] });
+    addTodos(ctx, { project: n.app, items: ['A', 'B'] });
+    updateTask(ctx, { task: `${n.app}/${n.paywall}`, check_steps: [2], decision: 'D' });
+    setSummary(ctx, { project: n.app, now: 'X' });
+    addTodos(ctxFor(home, 'chatgpt'), { project: n.app, text: 'Not mine' });
+    const r = logSession(ctx, { project: n.app, summary: 'Sesja.\nSzczegóły.', changes: ['+2 todo', 'extra'] });
     const chips =
       lang === 'pl'
         ? ['+2 todo', 'kroki odhaczone: 1', 'decyzje: +1', 'podsumowanie zaktualizowane', 'extra']
         : ['+2 todo', 'steps checked: 1', 'decisions: +1', 'summary updated', 'extra'];
     expect(r.recorded_changes).toEqual(chips);
-    expect(r.file).toMatch(new RegExp(`^projects/${n.cabinet}/sessions/\\d{4}-\\d{2}-\\d{2}-claude-code\\.md$`));
+    expect(r.file).toMatch(new RegExp(`^projects/${n.app}/sessions/\\d{4}-\\d{2}-\\d{2}-claude-code\\.md$`));
     const session = loadWorkspace(home)
-      .projects.find((p) => p.slug === n.cabinet)
+      .projects.find((p) => p.slug === n.app)
       ?.sessions.find((s) => r.file.endsWith(s.file));
     expect(session?.frontmatter).toMatchObject({ agent: 'claude-code', via: 'cli', changes: chips });
     expect(session?.body).toBe('Sesja.\nSzczegóły.');
     expect(session?.frontmatter.started).toBe(readActivity(home)[0]?.ts);
     // The next session starts after this log: no carried-over changes, file gets -2.
-    const second = logSession(ctx, { project: n.cabinet, summary: 'Druga.' });
+    const second = logSession(ctx, { project: n.app, summary: 'Druga.' });
     expect(second.recorded_changes).toEqual([]);
     expect(second.file).toMatch(/-claude-code-2\.md$/);
     expectValid(home);
@@ -310,8 +308,8 @@ describe.each(['pl', 'en'] as const)('operations on workspace-%s', (lang) => {
       added: [`lang: ${other}`],
     });
     // New sections now use the other language; existing ones still parse.
-    updateTask(ctxFor(home), { task: `${n.cabinet}/${n.shelves}`, decision: 'D' });
-    expect(read(home, `projects/${n.cabinet}/tasks/${n.shelves}.md`)).toContain(
+    updateTask(ctxFor(home), { task: `${n.app}/${n.onboarding}`, decision: 'D' });
+    expect(read(home, `projects/${n.app}/tasks/${n.onboarding}.md`)).toContain(
       other === 'pl' ? '## Decyzje' : '## Decisions',
     );
     expectValid(home);

@@ -50,11 +50,11 @@ describe('projects', () => {
 describe('session undo', () => {
   it('GET shows what would change, POST reverts; 409 with a clear message when dirty', async () => {
     const { home, agent, read } = setup('en');
-    const before = read('projects/display-cabinet/todos.md');
+    const before = read('projects/proof-app/todos.md');
     const ctx = { home, actor: 'claude-code' as const };
-    addTodos(ctx, { project: 'display-cabinet', text: 'Order hinges' });
-    updateTask(ctx, { task: 'display-cabinet/doors', note: 'Checked.' });
-    const { file } = logSession(ctx, { project: 'display-cabinet', summary: 'Hinges.' });
+    addTodos(ctx, { project: 'proof-app', text: 'Test restore on a second device' });
+    updateTask(ctx, { task: 'proof-app/paywall', note: 'Checked.' });
+    const { file } = logSession(ctx, { project: 'proof-app', summary: 'Restore purchases.' });
 
     const config = (await agent.get('/api/config').expect(200)).body as ConfigView;
     expect(config.git).toEqual({ repo: true, autocommit: 'session' });
@@ -62,7 +62,7 @@ describe('session undo', () => {
       .body as SessionUndoView;
     expect(info.available).toBe(true);
     expect(info.files.map((f) => f.path)).toEqual(
-      expect.arrayContaining(['projects/display-cabinet/todos.md', 'projects/display-cabinet/tasks/doors.md']),
+      expect.arrayContaining(['projects/proof-app/todos.md', 'projects/proof-app/tasks/paywall.md']),
     );
 
     writeFileSync(join(home, 'inbox.md'), `${read('inbox.md')}- [ ] Hand edit\n`);
@@ -72,8 +72,8 @@ describe('session undo', () => {
 
     const done = await agent.post('/api/sessions/undo').send({ file, commit_pending: true }).expect(200);
     expect(done.body.pending_commit).toBeTruthy();
-    expect(read('projects/display-cabinet/todos.md')).toBe(before);
-    const project = await agent.get('/api/projects/display-cabinet').expect(200);
+    expect(read('projects/proof-app/todos.md')).toBe(before);
+    const project = await agent.get('/api/projects/proof-app').expect(200);
     const session = project.body.timeline.find((i: { file: string }) => i.file === file);
     expect(session.undone).toMatch(/^\d{4}-/);
     expect(execFileSync('git', ['status', '--porcelain'], { cwd: home, encoding: 'utf8' })).toBe('');
@@ -87,15 +87,15 @@ describe('today and notes', () => {
     const iso = (d: Date) =>
       `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     const ctx = { home, actor: 'claude' as const };
-    updateTask(ctx, { task: 'witrynka/drzwiczki', due: iso(today) });
-    updateTask(ctx, { task: 'witrynka/polki', due: iso(new Date(today.getTime() - 86_400_000)) });
+    updateTask(ctx, { task: 'premiera-proof/zakup-w-aplikacji', due: iso(today) });
+    updateTask(ctx, { task: 'premiera-proof/ekrany-powitalne', due: iso(new Date(today.getTime() - 86_400_000)) });
     const view = (await agent.get('/api/today').expect(200)).body as TodayView;
     expect(view.date).toBe(iso(today));
-    expect(view.today.map((t) => t.id)).toContain('witrynka/drzwiczki');
-    expect(view.overdue.map((t) => t.id)).toContain('witrynka/polki');
+    expect(view.today.map((t) => t.id)).toContain('premiera-proof/zakup-w-aplikacji');
+    expect(view.overdue.map((t) => t.id)).toContain('premiera-proof/ekrany-powitalne');
     expect(view.next.length).toBeGreaterThan(0);
     expect(view.questions.every((q) => q.status === 'open')).toBe(true);
-    expect(view.activity[0]).toMatchObject({ actor: 'claude', project: 'witrynka' });
+    expect(view.activity[0]).toMatchObject({ actor: 'claude', project: 'premiera-proof' });
   });
 
   it('GET /api/notes returns notes and sessions of all projects, newest first', async () => {
@@ -109,9 +109,9 @@ describe('today and notes', () => {
 
   it('GET /api/search finds projects and folds Polish letters', async () => {
     const { agent } = setup('pl');
-    const hits = (await agent.get('/api/search?q=szklo&limit=20').expect(200)).body as { title: string }[];
-    expect(hits.some((h) => /szkło/i.test(h.title))).toBe(true);
-    const projects = (await agent.get('/api/search?q=witrynka&types=project').expect(200)).body as { type: string }[];
+    const hits = (await agent.get('/api/search?q=polki&limit=20').expect(200)).body as { title: string }[];
+    expect(hits.some((h) => /półki/i.test(h.title))).toBe(true);
+    const projects = (await agent.get('/api/search?q=zakwasu&types=project').expect(200)).body as { type: string }[];
     expect(projects.map((h) => h.type)).toEqual(['project']);
   });
 });

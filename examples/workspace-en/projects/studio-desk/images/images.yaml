@@ -1,0 +1,18 @@
+# Project images. pinned: true = "current" (max 5), sent to agents in the context pack.
+images:
+  - file: desk-sketch.svg
+    title: Desk — sketch with dimensions
+    category: drawing
+    caption: "Top 160 × 70 cm, 18 mm birch plywood; cable tray 12 cm deep at the back; monitor shelf 110 × 22 cm."
+    pinned: true
+    order: 1
+    tasks:
+      - plywood-top
+  - file: studio-floor-plan.svg
+    title: Studio floor plan
+    category: drawing
+    caption: "Room 3.2 × 2.8 m: the desk against the window wall, acoustic panels on the wall behind the chair."
+    pinned: true
+    order: 2
+    tasks:
+      - acoustic-panels

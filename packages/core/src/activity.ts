@@ -9,7 +9,7 @@ export interface ActivityEntry {
   /** e.g. `todo.add`, `task.status`, `step.check`, `summary.set`, `session.log`. */
   op: string;
   project?: string;
-  /** Ref or item id the change applies to, e.g. `witrynka/drzwiczki` or `td_w1gl`. */
+  /** Ref or item id the change applies to, e.g. `proof-app/paywall` or `td_w1gl`. */
   entity?: string;
   /** Short human-readable change in the workspace language, e.g. `+2 todo`. */
   summary: string;

@@ -8,8 +8,20 @@ export const exampleDir = (lang: 'pl' | 'en') => join(EXAMPLES, `workspace-${lan
 
 /** Names of the same things in both example workspaces. */
 export const NAMES = {
-  pl: { cabinet: 'witrynka', doors: 'drzwiczki', finish: 'wykonczenie', carcass: 'korpus', shelves: 'polki' },
-  en: { cabinet: 'display-cabinet', doors: 'doors', finish: 'finish', carcass: 'carcass', shelves: 'shelves' },
+  pl: {
+    app: 'premiera-proof',
+    paywall: 'zakup-w-aplikacji',
+    listing: 'karta-app-store',
+    engine: 'minutniki',
+    onboarding: 'ekrany-powitalne',
+  },
+  en: {
+    app: 'proof-app',
+    paywall: 'paywall',
+    listing: 'app-store-listing',
+    engine: 'timer-engine',
+    onboarding: 'onboarding',
+  },
 } as const;
 
 /** Copy an example workspace to a fresh temp dir; examples/ itself is never modified. */

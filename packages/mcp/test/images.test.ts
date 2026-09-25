@@ -39,10 +39,10 @@ function setPack(home: string, pack: string) {
 }
 
 describe('images in get_project / get_task / get_images', () => {
-  it('witrynka (24 images, 5 pinned): pinned pictures within budget, result < 1 MB, text within budget', async () => {
+  it('premiera-proof (7 images, 5 pinned): pinned pictures within budget, result < 1 MB, text within budget', async () => {
     const home = tempWorkspace('pl');
     const client = await connect({ home });
-    const r = await call(client, 'get_project', { project: 'witrynka' });
+    const r = await call(client, 'get_project', { project: 'premiera-proof' });
     expect(r.isError).toBeFalsy();
     const images = ofType(r, 'image');
     expect(images).toHaveLength(5);
@@ -55,7 +55,7 @@ describe('images in get_project / get_task / get_images', () => {
     // Captions are always there as text, one line per image.
     expect(texts.slice(1)).toHaveLength(5);
     expect(texts[1]).toMatch(
-      /^\[1\/5\] Render — front — Widok z przodu.*\(taskpack:\/\/witrynka\/images\/render-front\.svg\)$/,
+      /^\[1\/5\] Ekran główny — trwający wypiek — Makieta hi-fi.*\(taskpack:\/\/premiera-proof\/images\/ekran-glowny\.svg\)$/,
     );
     const cfg = loadWorkspace(home).config.pack;
     expect(r.structuredContent?.tokens as number).toBeLessThanOrEqual(cfg.max_tokens);
@@ -68,43 +68,39 @@ describe('images in get_project / get_task / get_images', () => {
     const home = tempWorkspace('pl');
     setPack(home, '  max_images: 2\n  max_image_kb: 700\n');
     const client = await connect({ home });
-    const r = await call(client, 'get_project', { project: 'witrynka' });
+    const r = await call(client, 'get_project', { project: 'premiera-proof' });
     expect(ofType(r, 'image')).toHaveLength(2);
     const links = ofType(r, 'resource_link');
     expect(links).toHaveLength(3);
     expect(links[0]).toMatchObject({
-      uri: 'taskpack://witrynka/images/detal-wpust.svg',
-      name: 'detal-wpust.svg',
-      title: 'Detal: wpust 6 × 10',
-      description: 'Przekrój ramiaka z wpustem 6 × 10 mm od wewnątrz.',
+      uri: 'taskpack://premiera-proof/images/sciezka-zakupu.svg',
+      name: 'sciezka-zakupu.svg',
+      title: 'Ścieżka zakupu',
+      description: expect.stringMatching(/^Stany StoreKit 2:/),
     });
 
     setPack(home, '  max_images: 5\n  max_image_kb: 1\n');
-    const tiny = await call(client, 'get_project', { project: 'witrynka' });
+    const tiny = await call(client, 'get_project', { project: 'premiera-proof' });
     expect(ofType(tiny, 'image')).toHaveLength(0);
     expect(ofType(tiny, 'resource_link')).toHaveLength(5);
 
-    const off = await call(client, 'get_project', { project: 'witrynka', include_images: false });
+    const off = await call(client, 'get_project', { project: 'premiera-proof', include_images: false });
     expect(blocks(off).map((b) => b.type)).toEqual(['text']);
   });
 
   it("get_task attaches the task's images", async () => {
     const client = await connect({ home: tempWorkspace('pl') });
-    const r = await call(client, 'get_task', { task: 'witrynka/drzwiczki' });
-    expect(ofType(r, 'image')).toHaveLength(3);
-    expect(r.structuredContent?.images_attached).toEqual([
-      'wymiary.svg',
-      'detal-wpust.svg',
-      'warsztat-21-wrz-drzwiczki.svg',
-    ]);
+    const r = await call(client, 'get_task', { task: 'premiera-proof/zakup-w-aplikacji' });
+    expect(ofType(r, 'image')).toHaveLength(2);
+    expect(r.structuredContent?.images_attached).toEqual(['paywall.svg', 'sciezka-zakupu.svg']);
   });
 
   it('get_images: metadata without ids, pictures with ids', async () => {
     const client = await connect({ home: tempWorkspace('pl') });
-    const all = await call(client, 'get_images', { project: 'witrynka', all: true });
+    const all = await call(client, 'get_images', { project: 'premiera-proof', all: true });
     expect(ofType(all, 'image')).toHaveLength(0);
-    expect((all.structuredContent?.images as unknown[] | undefined)?.length).toBe(24);
-    const drawings = await call(client, 'get_images', { project: 'witrynka', all: true, category: 'drawing' });
+    expect((all.structuredContent?.images as unknown[] | undefined)?.length).toBe(7);
+    const drawings = await call(client, 'get_images', { project: 'premiera-proof', all: true, category: 'drawing' });
     expect(
       (drawings.structuredContent?.images as { category: string }[] | undefined)?.every(
         (i) => i.category === 'drawing',
@@ -112,54 +108,54 @@ describe('images in get_project / get_task / get_images', () => {
     ).toBe(true);
 
     const some = await call(client, 'get_images', {
-      project: 'witrynka',
-      ids: ['render-bok.svg', 'taskpack://witrynka/images/rozkroj-desek.svg'],
+      project: 'premiera-proof',
+      ids: ['ikona-warianty.svg', 'taskpack://premiera-proof/images/beta-bez-awarii.svg'],
     });
     expect(ofType(some, 'image')).toHaveLength(2);
-    expect(some.structuredContent?.images_attached).toEqual(['render-bok.svg', 'rozkroj-desek.svg']);
+    expect(some.structuredContent?.images_attached).toEqual(['ikona-warianty.svg', 'beta-bez-awarii.svg']);
 
-    const six = await call(client, 'get_images', { project: 'witrynka', ids: ['a', 'b', 'c', 'd', 'e', 'f'] });
+    const six = await call(client, 'get_images', { project: 'premiera-proof', ids: ['a', 'b', 'c', 'd', 'e', 'f'] });
     expect(six.isError).toBe(true);
-    const missing = await call(client, 'get_images', { project: 'witrynka', ids: ['nie-ma.jpg'] });
+    const missing = await call(client, 'get_images', { project: 'premiera-proof', ids: ['nie-ma.jpg'] });
     expect(text(missing)).toMatch(/not found/);
   });
 
   it('serves taskpack://{project}/images/{id} as the agent JPEG', async () => {
     const client = await connect({ home: tempWorkspace('pl') });
-    const res = await client.readResource({ uri: 'taskpack://witrynka/images/wymiary.svg' });
+    const res = await client.readResource({ uri: 'taskpack://premiera-proof/images/paywall.svg' });
     const [image, caption] = res.contents as { mimeType: string; blob?: string; text?: string }[];
     expect(image?.mimeType).toBe('image/jpeg');
     expect(Buffer.from(image?.blob ?? '', 'base64').subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
-    expect(caption?.text).toMatch(/^Wymiary 180 × 80 × 38: Wymiary zewnętrzne/);
+    expect(caption?.text).toMatch(/^Paywall: Ekran jednorazowego zakupu/);
   });
 });
 
 describe('attach_image', () => {
   it('stores base64 data attributed to the actor, links a task and pins', async () => {
     const home = tempWorkspace('pl');
-    await call(await connect({ home }), 'get_project', { project: 'witrynka' }); // no-op read
-    const yaml = 'projects/witrynka/images/images.yaml';
+    await call(await connect({ home }), 'get_project', { project: 'premiera-proof' }); // no-op read
+    const yaml = 'projects/premiera-proof/images/images.yaml';
     const r = await call(await connect({ home }, 'Claude'), 'attach_image', {
-      project: 'witrynka',
+      project: 'premiera-proof',
       title: 'Kolor bejcy',
       category: 'inspiration',
       caption: 'Próbka na desce',
-      task: 'witrynka/wykonczenie',
+      task: 'premiera-proof/karta-app-store',
       source: { data_base64: PNG.toString('base64'), mime: 'image/png' },
     });
     expect(r.isError, text(r)).toBeFalsy();
     expect(r.structuredContent).toMatchObject({
       id: 'kolor-bejcy.png',
-      ref: 'taskpack://witrynka/images/kolor-bejcy.png',
+      ref: 'taskpack://premiera-proof/images/kolor-bejcy.png',
     });
     expect(read(home, yaml)).toMatch(
-      /- file: kolor-bejcy\.png\n {4}title: Kolor bejcy\n {4}category: inspiration\n {4}caption: Próbka na desce\n {4}pinned: false\n {4}order: 25\n {4}tasks: \[ wykonczenie \]\n {4}created_by: claude\n/,
+      /- file: kolor-bejcy\.png\n {4}title: Kolor bejcy\n {4}category: inspiration\n {4}caption: Próbka na desce\n {4}pinned: false\n {4}order: 8\n {4}tasks: \[ karta-app-store \]\n {4}created_by: claude\n/,
     );
     expect(readActivity(home).at(-1)).toMatchObject({ actor: 'claude', op: 'image.add' });
 
-    // Pin limit: witrynka already has 5 current images.
+    // Pin limit: premiera-proof already has 5 current images.
     const sixth = await call(await connect({ home }), 'attach_image', {
-      project: 'witrynka',
+      project: 'premiera-proof',
       title: 'Szósty',
       category: 'other',
       pin: true,
@@ -169,7 +165,7 @@ describe('attach_image', () => {
     expect(text(sixth)).toMatch(/najwyżej 5/);
 
     const mismatch = await call(await connect({ home }), 'attach_image', {
-      project: 'witrynka',
+      project: 'premiera-proof',
       title: 'x',
       category: 'other',
       source: { data_base64: PNG.toString('base64'), mime: 'image/jpeg' },
@@ -181,13 +177,13 @@ describe('attach_image', () => {
     const home = tempWorkspace('en');
     const client = await connect({ home }, 'claude-ai');
     const r = await call(client, 'attach_image', {
-      project: 'display-cabinet',
+      project: 'proof-app',
       title: 'Hinge sketch',
       category: 'drawing',
       source: { svg: SVG },
     });
     expect(r.structuredContent).toMatchObject({ file: 'hinge-sketch.svg', pinned: false });
-    const images = await call(client, 'get_images', { project: 'display-cabinet', ids: ['hinge-sketch.svg'] });
+    const images = await call(client, 'get_images', { project: 'proof-app', ids: ['hinge-sketch.svg'] });
     expect(ofType(images, 'image')).toHaveLength(1);
     expect(images.structuredContent?.images).toMatchObject([{ created_by: 'claude' }]);
   });
@@ -196,10 +192,10 @@ describe('attach_image', () => {
     const home = tempWorkspace('pl');
     const file = join(home, '..', 'zdjecie.png');
     writeFileSync(file, PNG);
-    const args = { project: 'witrynka', title: 'Zdjęcie', category: 'progress', source: { path: file } };
+    const args = { project: 'premiera-proof', title: 'Zdjęcie', category: 'progress', source: { path: file } };
     const ok = await call(await connect({ home }, 'claude-code'), 'attach_image', args);
     expect(ok.isError, text(ok)).toBeFalsy();
-    expect(read(home, 'projects/witrynka/images/images.yaml')).toContain('created_by: claude-code');
+    expect(read(home, 'projects/premiera-proof/images/images.yaml')).toContain('created_by: claude-code');
 
     const desktop = await call(await connect({ home }, 'Claude'), 'attach_image', args);
     expect(text(desktop)).toMatch(/only accepted from local coding agents/);
@@ -281,13 +277,13 @@ describe('attach_image({url}) and SSRF protection', () => {
     const home = tempWorkspace('pl');
     const client = await connect({ home, fetch: testFetch() });
     const r = await call(client, 'attach_image', {
-      project: 'witrynka',
+      project: 'premiera-proof',
       title: 'Z sieci',
       category: 'inspiration',
       source: { url: `https://images.test:${port}/photo.png` },
     });
     expect(r.isError, text(r)).toBeFalsy();
-    expect(readFileSync(join(home, 'projects/witrynka/images', String(r.structuredContent?.file)))).toEqual(PNG);
+    expect(readFileSync(join(home, 'projects/premiera-proof/images', String(r.structuredContent?.file)))).toEqual(PNG);
   });
 
   it('checks every address of the default private ranges', () => {
@@ -344,7 +340,7 @@ describe('attach_image({url}) and SSRF protection', () => {
   it('reports refusals as tool errors', async () => {
     const client = await connect({ home: tempWorkspace('pl'), fetch: { lookup } });
     const r = await call(client, 'attach_image', {
-      project: 'witrynka',
+      project: 'premiera-proof',
       title: 'x',
       category: 'other',
       source: { url: `https://metadata.test:${port}/latest/meta-data` },

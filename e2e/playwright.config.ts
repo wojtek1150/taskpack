@@ -2,20 +2,28 @@ import { cpSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
+import { freshenExample } from '../packages/core/dist/index.js';
 
 const REPO = resolve(import.meta.dirname, '..');
 
-// One temp copy of the Polish example workspace per run (workers inherit the env, so the
-// config, evaluated again in each worker, reuses it). `examples/` itself is never touched.
+// One temp copy of an example workspace per run (workers inherit the env, so the config,
+// evaluated again in each worker, reuses it), its dates moved so that the example's "today" is
+// today. `examples/` itself is never touched. The UI tests use the Polish workspace; the
+// screenshots (TASKPACK_SCREENSHOTS=1) the English one, as the README is English-first.
 if (!process.env.TASKPACK_E2E_HOME) {
+  const lang = process.env.TASKPACK_SCREENSHOTS ? 'en' : 'pl';
   const home = join(mkdtempSync(join(tmpdir(), 'taskpack-e2e-')), 'ws');
-  cpSync(join(REPO, 'examples/workspace-pl'), home, { recursive: true });
+  cpSync(join(REPO, `examples/workspace-${lang}`), home, { recursive: true });
+  freshenExample(home);
   process.env.TASKPACK_E2E_HOME = home;
+  process.env.TASKPACK_E2E_LANG = lang;
 }
 const PORT = Number(process.env.TASKPACK_E2E_PORT ?? 4299);
 
 export default defineConfig({
   testDir: '.',
+  // The demo build has its own config (playwright.demo.config.ts, `pnpm test:e2e:demo`).
+  testIgnore: ['demo.spec.ts'],
   outputDir: join(REPO, 'e2e/test-results'),
   fullyParallel: false,
   workers: 1,

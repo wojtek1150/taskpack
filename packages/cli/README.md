@@ -19,9 +19,9 @@ Exit codes: `0` success, `1` Taskpack error (not found, invalid input, validatio
 ## Commands
 
 ```sh
-taskpack init [--lang pl|en] [--example] [--no-git] [--no-kit]
+taskpack init [--lang pl|en] [--example] [--example-date <YYYY-MM-DD>] [--no-git] [--no-kit]
 ```
-Creates the workspace: `taskpack.yaml`, `inbox.md`, `questions.md`, `projects/`, a `.gitignore` for `.taskpack/`, the [agent kit](../../agent-kit/README.md) (`AGENTS.md`, `CLAUDE.md`, `.claude/`, `.mcp.json`), then `git init` and an initial commit. `--example` copies `examples/workspace-<lang>`. Asks for the language when run in a terminal without `--lang` (defaults to `en` otherwise). Refuses a non-empty folder.
+Creates the workspace: `taskpack.yaml`, `inbox.md`, `questions.md`, `projects/`, a `.gitignore` for `.taskpack/`, the [agent kit](../../agent-kit/README.md) (`AGENTS.md`, `CLAUDE.md`, `.claude/`, `.mcp.json`), then `git init` and an initial commit. `--example` copies `examples/workspace-<lang>` and moves its dates so the sample looks current: the example is written for 2026-09-25 (`EXAMPLE_TODAY` in `@taskpack/core`), and every date is shifted by the days between that and today, or `--example-date`. Asks for the language when run in a terminal without `--lang` (defaults to `en` otherwise). Refuses a non-empty folder.
 
 ```sh
 taskpack validate [path]            # whole workspace, or only issues of one file; exit 1 on errors
@@ -100,16 +100,16 @@ Hook exit codes follow Claude Code: `0` (with JSON output where the hook adds co
 ## Example
 
 ```console
-$ taskpack --actor claude-code todo add witrynka Zamówić listwy dębowe 2 m
+$ taskpack --actor claude-code todo add premiera-proof Sprawdzić przywracanie na drugim telefonie
 Dodano todo: 1
-  td_66v6  Zamówić listwy dębowe 2 m
-$ taskpack --actor claude-code task update witrynka/drzwiczki --check 2
-Zaktualizowano task: taskpack://witrynka/drzwiczki (zmiany: steps; postęp 67%)
-$ taskpack --actor claude-code session log witrynka --summary "Listwy zamówione, prawy wpust gotowy."
-Zapisano sesję: projects/witrynka/sessions/2026-09-24-claude-code.md
+  td_2mph  Sprawdzić przywracanie na drugim telefonie
+$ taskpack --actor claude-code task update premiera-proof/zakup-w-aplikacji --check 2
+Zaktualizowano task: taskpack://premiera-proof/zakup-w-aplikacji (zmiany: steps; postęp 67%)
+$ taskpack --actor claude-code session log premiera-proof --summary "Przywracanie zakupów działa, zostały teksty na paywallu."
+Zapisano sesję: projects/premiera-proof/sessions/2026-09-25-claude-code.md
   · +1 todo
   · kroki odhaczone: 1
-commit: 9d2abe2
+commit: 1592e77
 ```
 
 Using Taskpack from Claude Code, Claude Desktop, Codex and Cursor: [agent-kit/GUIDE.md](../../agent-kit/GUIDE.md).

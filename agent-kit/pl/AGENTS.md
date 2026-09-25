@@ -18,7 +18,7 @@ projects/<projekt>/
 .taskpack/                     dane pochodne (indeks, log aktywności): nigdy nie edytuj
 ```
 
-Referencja `taskpack://witrynka` oznacza folder projektu `projects/witrynka/`; `taskpack://witrynka/drzwiczki` oznacza plik `projects/witrynka/tasks/drzwiczki.md`.
+Referencja `taskpack://premiera-proof` oznacza folder projektu `projects/premiera-proof/`; `taskpack://premiera-proof/zakup-w-aplikacji` oznacza plik `projects/premiera-proof/tasks/zakup-w-aplikacji.md`.
 
 ## 1. Najpierw kontekst
 

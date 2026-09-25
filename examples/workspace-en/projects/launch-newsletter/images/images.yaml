@@ -1,0 +1,16 @@
+# Project images. pinned: true = "current" (max 5), sent to agents in the context pack.
+images:
+  - file: subscriber-growth.svg
+    title: Subscribers — first five weeks
+    category: progress
+    caption: "Weekly total since the waitlist page went up: 312 now, 500 is the launch-day goal."
+    pinned: true
+    order: 1
+  - file: email-template.svg
+    title: Email template
+    category: drawing
+    caption: Single column, 600 px wide, one image and one button per email.
+    pinned: false
+    order: 2
+    tasks:
+      - launch-sequence

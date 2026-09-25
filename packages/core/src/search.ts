@@ -123,7 +123,7 @@ function projectRows(p: ProjectData): Row[] {
   return rows;
 }
 
-/** `ł` has no Unicode decomposition, so FTS5 does not fold it; a folded copy makes `szklo` find `szkło`. */
+/** `ł` has no Unicode decomposition, so FTS5 does not fold it; a folded copy makes `polka` find `półka`. */
 const fold = (text: string) => text.replace(/ł/g, 'l').replace(/Ł/g, 'L');
 
 function insertRows(db: Db, rows: Row[]): void {

@@ -1,0 +1,10 @@
+# Project images. pinned: true = "current" (max 5), sent to agents in the context pack.
+images:
+  - file: route-map.svg
+    title: Route — Tokyo → Kanazawa → Kyoto
+    category: visualization
+    caption: "Three bases by train: 4 nights in Tokyo, 2 in Kanazawa, 4 in Kyoto; a day trip to Nara."
+    pinned: true
+    order: 1
+    tasks:
+      - itinerary

@@ -9,7 +9,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:demo": "node ../../scripts/demo-seed.mjs && vite build --mode demo",
+    "preview:demo": "vite preview --mode demo --port 4173 --strictPort"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

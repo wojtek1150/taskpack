@@ -49,7 +49,7 @@ describe('taskpack image', () => {
       'claude-code',
       'image',
       'add',
-      'witrynka',
+      'premiera-proof',
       'Szuflada 1.png',
       'szuflada-2.png',
       '--category',
@@ -57,35 +57,35 @@ describe('taskpack image', () => {
       '--caption',
       'Szuflada po klejeniu',
       '--task',
-      'drzwiczki',
+      'zakup-w-aplikacji',
     );
     expect(add.err).toBe('');
     expect(add.code).toBe(0);
     expect(add.out).toBe(
-      'Dodano obraz: taskpack://witrynka/images/szuflada-1.png\nDodano obraz: taskpack://witrynka/images/szuflada-2.png\n',
+      'Dodano obraz: taskpack://premiera-proof/images/szuflada-1.png\nDodano obraz: taskpack://premiera-proof/images/szuflada-2.png\n',
     );
-    const yaml = readFileSync(join(home, 'projects/witrynka/images/images.yaml'), 'utf8');
+    const yaml = readFileSync(join(home, 'projects/premiera-proof/images/images.yaml'), 'utf8');
     expect(yaml).toContain('  - file: szuflada-1.png\n    title: Szuflada 1\n    category: progress\n');
     expect(yaml).toContain('created_by: claude-code');
 
-    const pinFull = await taskpack('image', 'pin', 'witrynka/szuflada-1.png');
+    const pinFull = await taskpack('image', 'pin', 'premiera-proof/szuflada-1.png');
     expect(pinFull.code).toBe(1);
     expect(pinFull.err).toMatch(/najwyżej 5/);
 
-    expect((await taskpack('image', 'unpin', 'taskpack://witrynka/images/render-front.svg')).out).toBe(
-      'Odpięto obraz: taskpack://witrynka/images/render-front.svg\n',
+    expect((await taskpack('image', 'unpin', 'taskpack://premiera-proof/images/ekran-glowny.svg')).out).toBe(
+      'Odpięto obraz: taskpack://premiera-proof/images/ekran-glowny.svg\n',
     );
-    expect((await taskpack('image', 'pin', 'witrynka/images/szuflada-1.png')).code).toBe(0);
+    expect((await taskpack('image', 'pin', 'premiera-proof/images/szuflada-1.png')).code).toBe(0);
 
-    const list = await taskpack('image', 'list', 'witrynka');
-    expect(list.out.split('\n')[0]).toBe('Obrazy: 5 z 26');
+    const list = await taskpack('image', 'list', 'premiera-proof');
+    expect(list.out.split('\n')[0]).toBe('Obrazy: 5 z 9');
     expect(list.out.trim().split('\n').at(-1)).toMatch(
-      /^ {2}\* taskpack:\/\/witrynka\/images\/szuflada-1\.png {2}Szuflada 1/,
+      /^ {2}\* taskpack:\/\/premiera-proof\/images\/szuflada-1\.png {2}Szuflada 1/,
     );
-    const all = JSON.parse((await taskpack('--json', 'image', 'list', 'witrynka', '--all')).out) as unknown[];
-    expect(all).toHaveLength(26);
+    const all = JSON.parse((await taskpack('--json', 'image', 'list', 'premiera-proof', '--all')).out) as unknown[];
+    expect(all).toHaveLength(9);
 
-    const bad = await taskpack('image', 'add', 'witrynka', join(home, 'taskpack.yaml'));
+    const bad = await taskpack('image', 'add', 'premiera-proof', join(home, 'taskpack.yaml'));
     expect(bad.code).toBe(1);
     expect(bad.err).toMatch(/Nieobsługiwany typ pliku/);
   });
@@ -93,16 +93,16 @@ describe('taskpack image', () => {
   it('thumbs and reindex make missing variants', async () => {
     const home = workspace();
     const taskpack = cli(home);
-    const first = JSON.parse((await taskpack('--json', 'image', 'thumbs', 'witrynka')).out) as {
+    const first = JSON.parse((await taskpack('--json', 'image', 'thumbs', 'premiera-proof')).out) as {
       images: number;
       generated: number;
     };
-    expect(first).toMatchObject({ images: 24, generated: 48 });
+    expect(first).toMatchObject({ images: 7, generated: 14 });
     rmSync(join(home, '.taskpack', 'thumbs'), { recursive: true });
     const re = await taskpack('reindex');
     expect(re.code).toBe(0);
     expect(re.out).toMatch(/wygenerowane warianty: \d+/);
     expect(existsSync(join(home, '.taskpack', 'thumbs'))).toBe(true);
-    expect(readdirSync(join(home, '.taskpack', 'thumbs')).length).toBeGreaterThanOrEqual(24);
+    expect(readdirSync(join(home, '.taskpack', 'thumbs')).length).toBeGreaterThanOrEqual(7);
   });
 });

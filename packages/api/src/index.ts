@@ -437,3 +437,24 @@ export interface ChangeEvent {
   /** Activity log entries written since the previous event (who did what). */
   activity: ActivityView[];
 }
+
+// ---------------------------------------------------------------------------
+// Demo build
+
+/**
+ * One example workspace as the API shows it, for the in-browser backend of the demo build
+ * (`pnpm build:demo`). Made at build time by `@taskpack/server`'s `demoSeed` with the real views.
+ */
+export interface DemoSeed {
+  lang: Lang;
+  /** The day the data was written for, `YYYY-MM-DD`; the demo moves every date so that it is today. */
+  today: string;
+  config: ConfigView;
+  connect: ConnectView;
+  /** In sidebar order. */
+  projects: { view: ProjectView; card: ProjectCard }[];
+  tasks: TaskView[];
+  questions: QuestionView[];
+  /** Open tasks in board order (column by column) with the agent badge. */
+  board: { id: string; status: BoardStatus; agent?: Actor }[];
+}

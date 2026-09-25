@@ -3,7 +3,7 @@ import { Button } from './Button';
 import styles from './CopyField.module.css';
 import { useCopy } from './useCopy';
 
-/** Monospace text with a Copy / Copied button (e.g. `taskpack://witrynka`). */
+/** Monospace text with a Copy / Copied button (e.g. `taskpack://proof-app`). */
 export function CopyField({ text, label }: { text: string; label?: string }) {
   const { t } = useTranslation();
   const { copied, copy } = useCopy();

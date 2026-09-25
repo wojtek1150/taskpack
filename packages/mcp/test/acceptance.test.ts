@@ -22,32 +22,32 @@ function initExample(): string {
   return home;
 }
 
-describe('Phase 2 acceptance: an MCP session on taskpack://witrynka', () => {
+describe('Phase 2 acceptance: an MCP session on taskpack://premiera-proof', () => {
   it('get_project → add_todo ×2 → log_session gives attributed todos, a session note and a commit', async () => {
     const home = initExample();
     expect(existsSync(join(home, 'AGENTS.md'))).toBe(true);
     expect(existsSync(join(home, '.mcp.json'))).toBe(true);
     const client = await connect({ home }, 'claude-code');
 
-    const pack = await call(client, 'get_project', { project: 'taskpack://witrynka' });
-    expect(text(pack)).toContain('# Witrynka (taskpack://witrynka)');
+    const pack = await call(client, 'get_project', { project: 'taskpack://premiera-proof' });
+    expect(text(pack)).toContain('# Premiera Proof (taskpack://premiera-proof)');
 
-    const first = await call(client, 'add_todo', { project: 'witrynka', text: 'Kupić kołki 8 mm' });
-    const second = await call(client, 'add_todo', { project: 'witrynka', text: 'Kupić klej do drewna' });
+    const first = await call(client, 'add_todo', { project: 'premiera-proof', text: 'Kupić kołki 8 mm' });
+    const second = await call(client, 'add_todo', { project: 'premiera-proof', text: 'Kupić klej do drewna' });
     expect(first.isError || second.isError).toBeFalsy();
 
     const session = await call(client, 'log_session', {
-      project: 'witrynka',
+      project: 'premiera-proof',
       summary: 'Dopisaliśmy zakupy na montaż listew.',
     });
     expect(session.isError, text(session)).toBeFalsy();
     const result = session.structuredContent as { file: string; recorded_changes: string[]; commit?: string };
 
-    const todos = read(home, 'projects/witrynka/todos.md');
+    const todos = read(home, 'projects/premiera-proof/todos.md');
     expect(todos).toMatch(/- \[ \] Kupić kołki 8 mm <!-- id:td_\w+ by:claude-code at:/);
     expect(todos).toMatch(/- \[ \] Kupić klej do drewna <!-- id:td_\w+ by:claude-code at:/);
 
-    expect(result.file).toMatch(/^projects\/witrynka\/sessions\/\d{4}-\d{2}-\d{2}-claude-code\.md$/);
+    expect(result.file).toMatch(/^projects\/premiera-proof\/sessions\/\d{4}-\d{2}-\d{2}-claude-code\.md$/);
     expect(result.recorded_changes).toEqual(['+2 todo']);
     const note = parseFrontmatter(read(home, result.file));
     expect(note.data).toMatchObject({ agent: 'claude-code', via: 'mcp', changes: ['+2 todo'] });
@@ -76,13 +76,13 @@ describe('taskpack-mcp over stdio', () => {
     await client.connect(transport);
     try {
       expect((await client.listTools()).tools).toHaveLength(14);
-      const added = await call(client, 'add_todo', { project: 'witrynka', text: 'Przez stdio' });
+      const added = await call(client, 'add_todo', { project: 'premiera-proof', text: 'Przez stdio' });
       expect(added.isError, text(added)).toBeFalsy();
-      expect(read(home, 'projects/witrynka/todos.md')).toMatch(/Przez stdio <!-- id:td_\w+ by:claude /);
+      expect(read(home, 'projects/premiera-proof/todos.md')).toMatch(/Przez stdio <!-- id:td_\w+ by:claude /);
     } finally {
       await client.close();
     }
-    expect(readdirSync(join(home, 'projects/witrynka'))).toContain('todos.md');
+    expect(readdirSync(join(home, 'projects/premiera-proof'))).toContain('todos.md');
   });
 
   it.skipIf(!existsSync(BIN))('exits with a message when TASKPACK_HOME is not a workspace', () => {

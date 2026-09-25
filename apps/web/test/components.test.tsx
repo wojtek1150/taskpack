@@ -36,8 +36,8 @@ describe('WeightBars', () => {
 
 describe('StepsChecklist', () => {
   const steps: StepView[] = [
-    { id: 'st_a', text: 'Lewe drzwiczki', done: true, next: false },
-    { id: 'st_b', text: 'Prawe drzwiczki', done: false, next: true },
+    { id: 'st_a', text: 'Produkt w StoreKit', done: true, next: false },
+    { id: 'st_b', text: 'Przywracanie zakupów', done: false, next: true },
     { id: 'st_c', text: 'Listwy', done: false, next: false },
   ];
 
@@ -47,7 +47,7 @@ describe('StepsChecklist', () => {
     expect(within(items[1] as HTMLElement).getByText('następny')).toBeInTheDocument();
     expect(within(items[0] as HTMLElement).queryByText('następny')).toBeNull();
     expect(screen.getByText('1/3 · 33%')).toBeInTheDocument();
-    expect(screen.getByRole('checkbox', { name: 'Lewe drzwiczki' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Produkt w StoreKit' })).toBeChecked();
   });
 
   it('ticks, reorders (1-based target) and adds steps', async () => {
@@ -57,14 +57,14 @@ describe('StepsChecklist', () => {
     const onAdd = vi.fn();
     render(<StepsChecklist steps={steps} onToggle={onToggle} onMove={onMove} onAdd={onAdd} />);
 
-    await user.click(screen.getByRole('checkbox', { name: 'Prawe drzwiczki' }));
+    await user.click(screen.getByRole('checkbox', { name: 'Przywracanie zakupów' }));
     expect(onToggle).toHaveBeenCalledWith('st_b', true);
 
-    expect(screen.getByRole('button', { name: 'Przesuń wyżej: Lewe drzwiczki' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Przesuń wyżej: Produkt w StoreKit' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Przesuń niżej: Listwy' })).toBeDisabled();
     await user.click(screen.getByRole('button', { name: 'Przesuń wyżej: Listwy' }));
     expect(onMove).toHaveBeenCalledWith('st_c', 2);
-    await user.click(screen.getByRole('button', { name: 'Przesuń niżej: Lewe drzwiczki' }));
+    await user.click(screen.getByRole('button', { name: 'Przesuń niżej: Produkt w StoreKit' }));
     expect(onMove).toHaveBeenCalledWith('st_a', 2);
 
     await user.type(screen.getByRole('textbox', { name: 'Nowy krok' }), 'Olejowanie{Enter}');
@@ -82,10 +82,10 @@ describe('Gallery pin limit', () => {
     pinned,
     ...(pinned ? { pinnedRank: 'abcde'.indexOf(file[0] ?? '') + 1 } : {}),
     tasks: [],
-    ref: `taskpack://witrynka/images/${file}`,
-    url: `/api/files/witrynka/images/${file}`,
-    thumbUrl: `/api/img/thumb/witrynka/${file}`,
-    agentUrl: `/api/img/agent/witrynka/${file}`,
+    ref: `taskpack://premiera-proof/images/${file}`,
+    url: `/api/files/premiera-proof/images/${file}`,
+    thumbUrl: `/api/img/thumb/premiera-proof/${file}`,
+    agentUrl: `/api/img/agent/premiera-proof/${file}`,
     placeholder: false,
     exists: true,
   });
@@ -102,7 +102,7 @@ describe('Gallery pin limit', () => {
     const user = userEvent.setup();
     withQuery(
       <Gallery
-        project="witrynka"
+        project="premiera-proof"
         images={[...five, image('f.svg', false)]}
         tasks={[]}
         view="all"
@@ -121,12 +121,14 @@ describe('Gallery pin limit', () => {
     );
     vi.stubGlobal('fetch', fetch);
     const user = userEvent.setup();
-    withQuery(<Gallery project="witrynka" images={five} tasks={[]} view="current" onView={vi.fn()} onCat={vi.fn()} />);
+    withQuery(
+      <Gallery project="premiera-proof" images={five} tasks={[]} view="current" onView={vi.fn()} onCat={vi.fn()} />,
+    );
     const pin = screen.getByRole('button', { name: 'Odepnij a.svg' });
     expect(pin).toHaveAttribute('aria-pressed', 'true');
     await user.click(pin);
     await vi.waitFor(() => expect(fetch).toHaveBeenCalled());
-    expect(fetch).toHaveBeenCalledWith('/api/projects/witrynka/images/a.svg', {
+    expect(fetch).toHaveBeenCalledWith('/api/projects/premiera-proof/images/a.svg', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pinned: false }),
@@ -142,18 +144,18 @@ describe('Gallery tiles and lightbox', () => {
     caption: `Caption ${file}`,
     pinned: false,
     tasks: [],
-    ref: `taskpack://witrynka/images/${file}`,
-    url: `/api/files/witrynka/images/${file}`,
-    thumbUrl: `/api/img/thumb/witrynka/${file}`,
-    agentUrl: `/api/img/agent/witrynka/${file}`,
+    ref: `taskpack://premiera-proof/images/${file}`,
+    url: `/api/files/premiera-proof/images/${file}`,
+    thumbUrl: `/api/img/thumb/premiera-proof/${file}`,
+    agentUrl: `/api/img/agent/premiera-proof/${file}`,
     placeholder: false,
     exists: true,
     ...extra,
   });
   const tasks = [
     {
-      slug: 'drzwiczki',
-      ref: 'taskpack://witrynka/drzwiczki',
+      slug: 'zakup-w-aplikacji',
+      ref: 'taskpack://premiera-proof/zakup-w-aplikacji',
       title: 'Drzwiczki',
       status: 'todo',
       weight: 3,
@@ -166,7 +168,7 @@ describe('Gallery tiles and lightbox', () => {
   it('shows thumbnails, the current images in pinned order and the agent badge', () => {
     withQuery(
       <Gallery
-        project="witrynka"
+        project="premiera-proof"
         images={[
           image('a.png', { pinned: true, pinnedRank: 2 }),
           image('b.png', { pinned: true, pinnedRank: 1, createdBy: 'claude' }),
@@ -180,8 +182,8 @@ describe('Gallery tiles and lightbox', () => {
     );
     const imgs = screen.getAllByRole('img');
     expect(imgs.map((i) => i.getAttribute('src'))).toEqual([
-      '/api/img/thumb/witrynka/b.png',
-      '/api/img/thumb/witrynka/a.png',
+      '/api/img/thumb/premiera-proof/b.png',
+      '/api/img/thumb/premiera-proof/a.png',
     ]);
     expect(screen.getByText('od Claude')).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /Przeciągnij, żeby zmienić kolejność/ })).toHaveLength(2);
@@ -198,7 +200,7 @@ describe('Gallery tiles and lightbox', () => {
     const user = userEvent.setup();
     withQuery(
       <Gallery
-        project="witrynka"
+        project="premiera-proof"
         images={[image('a.png'), image('b.png')]}
         tasks={[...tasks]}
         view="all"
@@ -213,7 +215,7 @@ describe('Gallery tiles and lightbox', () => {
     await user.type(caption, 'Nowy podpis');
     await user.click(screen.getByRole('textbox', { name: 'Tytuł' }));
     await vi.waitFor(() => expect(fetch).toHaveBeenCalled());
-    expect(fetch).toHaveBeenCalledWith('/api/projects/witrynka/images/a.png', {
+    expect(fetch).toHaveBeenCalledWith('/api/projects/premiera-proof/images/a.png', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ caption: 'Nowy podpis' }),
@@ -221,10 +223,10 @@ describe('Gallery tiles and lightbox', () => {
 
     await user.click(screen.getByRole('checkbox', { name: 'Drzwiczki' }));
     await vi.waitFor(() =>
-      expect(fetch).toHaveBeenLastCalledWith('/api/projects/witrynka/images/a.png', {
+      expect(fetch).toHaveBeenLastCalledWith('/api/projects/premiera-proof/images/a.png', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tasks: ['drzwiczki'] }),
+        body: JSON.stringify({ tasks: ['zakup-w-aplikacji'] }),
       }),
     );
 
@@ -259,7 +261,7 @@ describe('TaskCard', () => {
   it('shows weight, project, due date, steps, progress and the agent badge', () => {
     render(
       <TaskCardBody
-        card={card('witrynka/drzwiczki', {
+        card={card('premiera-proof/zakup-w-aplikacji', {
           status: 'in_progress',
           weight: 4,
           due: '2026-09-28',
@@ -278,7 +280,7 @@ describe('TaskCard', () => {
   });
 
   it('prefers the question flag over "new from agent"', () => {
-    render(<TaskCardBody card={card('witrynka/x', { isNew: true, hasQuestion: true })} />);
+    render(<TaskCardBody card={card('premiera-proof/x', { isNew: true, hasQuestion: true })} />);
     expect(screen.getByText('pytanie')).toBeInTheDocument();
     expect(screen.queryByText('nowe od agenta')).toBeNull();
     expect(screen.queryByRole('progressbar')).toBeNull();

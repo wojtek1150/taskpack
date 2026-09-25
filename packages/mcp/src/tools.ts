@@ -101,7 +101,7 @@ const write = (idempotent: boolean): ToolAnnotations => ({
 });
 
 const ref = (what: string) =>
-  z.string().min(1).describe(`${what}: slug or reference, e.g. "witrynka" or "taskpack://witrynka"`);
+  z.string().min(1).describe(`${what}: slug or reference, e.g. "proof-app" or "taskpack://proof-app"`);
 const taskRef = z.string().min(1).describe('Task reference: "taskpack://project/task", "project/task"');
 const requestId = z
   .string()

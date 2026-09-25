@@ -41,9 +41,9 @@ function legacyWorkspace(): string {
 
 describe('compatibility with the former name Groove', () => {
   it('parseRef still accepts groove:// references', () => {
-    expect(parseRef('groove://display-cabinet/doors')).toEqual({ project: 'display-cabinet', task: 'doors' });
-    expect(parseRef('groove://display-cabinet')).toEqual({ project: 'display-cabinet' });
-    expect(parseRef('taskpack://display-cabinet/doors')).toEqual({ project: 'display-cabinet', task: 'doors' });
+    expect(parseRef('groove://proof-app/paywall')).toEqual({ project: 'proof-app', task: 'paywall' });
+    expect(parseRef('groove://proof-app')).toEqual({ project: 'proof-app' });
+    expect(parseRef('taskpack://proof-app/paywall')).toEqual({ project: 'proof-app', task: 'paywall' });
   });
 
   it('honors GROOVE_HOME when TASKPACK_HOME is not set', () => {
@@ -58,19 +58,19 @@ describe('compatibility with the former name Groove', () => {
     expect(ws.config.lang).toBe('en');
     expect(ws.issues).toEqual([]);
 
-    addTodos(ctxFor(home), { project: 'display-cabinet', items: ['Order hinges'] });
+    addTodos(ctxFor(home), { project: 'proof-app', items: ['Order a StoreKit test device'] });
     setLang(ctxFor(home, 'user'), { lang: 'pl' });
     expect(readFileSync(join(home, 'groove.yaml'), 'utf8')).toMatch(/^lang: pl/m);
     expect(existsSync(join(home, 'taskpack.yaml'))).toBe(false);
     // Derived data stays in the folder its .gitignore ignores.
     expect(existsSync(join(home, '.groove', 'activity.jsonl'))).toBe(true);
     expect(existsSync(join(home, '.taskpack'))).toBe(false);
-    expect(search(home, { query: 'hinges' }).some((h) => h.project === 'display-cabinet')).toBe(true);
+    expect(search(home, { query: 'storekit' }).some((h) => h.project === 'proof-app')).toBe(true);
   });
 
   it('migrateLayout renames groove.yaml, .groove/ and the .gitignore line', () => {
     const home = legacyWorkspace();
-    addTodos(ctxFor(home), { project: 'display-cabinet', items: ['Order hinges'] });
+    addTodos(ctxFor(home), { project: 'proof-app', items: ['Order a StoreKit test device'] });
     expect(migrateLayout(home, true)).toEqual([
       'groove.yaml → taskpack.yaml',
       '.groove → .taskpack',
@@ -98,15 +98,13 @@ describe('compatibility with the former name Groove', () => {
     const home = join(mkdtempSync(join(tmpdir(), 'taskpack-legacy-')), 'Groove');
     initWorkspace({ home, lang: 'en', exampleDir: exampleDir('en') });
     const ctx = ctxFor(home, 'claude-code');
-    addTodos(ctx, { project: 'display-cabinet', items: ['Order hinges'] });
-    createTask(ctx, { project: 'display-cabinet', title: 'Fit the glass', weight: 3 });
-    const session = logSession(ctx, { project: 'display-cabinet', summary: 'Planned the glass.' });
+    addTodos(ctx, { project: 'proof-app', items: ['Order a StoreKit test device'] });
+    createTask(ctx, { project: 'proof-app', title: 'Fit the glass', weight: 3 });
+    const session = logSession(ctx, { project: 'proof-app', summary: 'Planned the glass.' });
     // Rewrite the autocommit as Groove made it.
-    const trailers = [
-      'Groove-Actor: claude-code',
-      'Groove-Project: display-cabinet',
-      `Groove-Session: ${session.file}`,
-    ].join('\n');
+    const trailers = ['Groove-Actor: claude-code', 'Groove-Project: proof-app', `Groove-Session: ${session.file}`].join(
+      '\n',
+    );
     git(
       home,
       '-c',
@@ -125,7 +123,7 @@ describe('compatibility with the former name Groove', () => {
 
     expect(sessionUndoInfo(home, session.file)).toMatchObject({ available: true });
     undoSession(ctxFor(home, 'user'), { session: session.file });
-    expect(readFileSync(join(home, 'projects/display-cabinet/todos.md'), 'utf8')).not.toContain('Order hinges');
+    expect(readFileSync(join(home, 'projects/proof-app/todos.md'), 'utf8')).not.toContain('Order hinges');
 
     // An undo recorded with the old trailer also counts.
     const undoCommit = git(home, 'log', '-1', '--format=%B').replace('Taskpack-Undo:', 'Groove-Undo:');

@@ -167,7 +167,7 @@ Set them in your shell for the CLI, in `.claude/settings.json` → `env` for Cla
 
 - **`get_project`** attaches the pinned ("current") images, in pinned order, as MCP image content: `{ "type": "image", "data": "<base64>", "mimeType": "image/jpeg" }`. The picture is the agent variant (`.taskpack/agent/<sha256>.jpg`: longest side ≤ 1024 px, quality ≈ 78, aimed at ≤ 150 KB, EXIF and GPS removed, orientation applied). **`get_task`** does the same for the task's images, pinned first. `include_images: false` switches it off.
 - **Budget** from `taskpack.yaml`: `pack.max_images` (default 5, at most 5) pictures and `pack.max_image_kb` (default 700) KB of base64 in total per result. An image that does not fit, or has no preview (PDF, HEIC without a decoder), comes as `{ "type": "resource_link", "uri": "taskpack://<p>/images/<file>", "name": "<file>", "title": …, "description": <caption>, "mimeType": "image/jpeg" }`; the agent can read that resource or call `get_images` with its id.
-- **Captions always come as text:** before each image or link there is a line `[n/N] <title> — <caption> (taskpack://<p>/images/<file>)`, so clients that drop images still pass the facts to the model. The witrynka example (24 images, 5 pinned) stays under 1 MB and within the 2 500-token text budget (tested).
+- **Captions always come as text:** before each image or link there is a line `[n/N] <title> — <caption> (taskpack://<p>/images/<file>)`, so clients that drop images still pass the facts to the model. The `premiera-proof` example (7 images, 5 pinned) stays under 1 MB and within the 2 500-token text budget (tested).
 - **`get_images(project, all?, category?, ids?)`:** without `ids` metadata only (title, category, caption, pinned, tasks, `ref`, `created_by`), the pinned images by default, every image with `all`. With `ids` (file names or `taskpack://…/images/<file>`, at most 5) the pictures within the same byte budget.
 - **`attach_image(project, title, category, caption?, pin?, task?, source)`** adds an image as the calling actor (`created_by` in `images.yaml`; the gallery shows "from Claude"). `source` is one of:
   - `{ data_base64, mime }`: at most 4 MB decoded; the bytes must match `mime`.
@@ -196,19 +196,19 @@ It is `git revert` into one new commit: nothing is deleted from history. A confl
 Not automated (the tests use an in-process MCP client, the built stdio server and the hook commands with sample stdin; they do not drive the real apps):
 
 1. `pnpm taskpack init --lang pl --example --home /tmp/g && cd /tmp/g && claude` → the session-start dashboard appears in the first answer's context (ask “co masz w kontekście z Taskpacka?”). Approve the `taskpack` MCP server.
-2. “pracujemy nad taskpack://witrynka, dopisz 2 todo i zakończ sesję” → two todos with `by:claude-code` in `projects/witrynka/todos.md`, a new `sessions/<date>-claude-code.md`, one git commit (`git -C /tmp/g log -1`).
-3. Ask Claude to delete `projects/witrynka/todos.md` → blocked by the guard. Ask it to write `status: W toku` into a task → the edit is rejected with the validation message and Claude fixes it.
+2. “pracujemy nad taskpack://premiera-proof, dopisz 2 todo i zakończ sesję” → two todos with `by:claude-code` in `projects/premiera-proof/todos.md`, a new `sessions/<date>-claude-code.md`, one git commit (`git -C /tmp/g log -1`).
+3. Ask Claude to delete `projects/premiera-proof/todos.md` → blocked by the guard. Ask it to write `status: W toku` into a task → the edit is rejected with the validation message and Claude fixes it.
 4. Change a todo, then say “that's all” without wrapping up → Claude is asked once for `/taskpack-wrap`.
-5. `/taskpack-start witrynka`, `/taskpack-status`, `/taskpack-add witrynka Kupić kołki`, `/taskpack-wrap` behave as described.
-6. Claude Desktop: `pnpm taskpack mcp config claude-desktop --write --home /tmp/g`, restart, “pracujemy nad taskpack://witrynka, dopisz 2 todo i zakończ sesję” → todos with `by:claude`, a session note with `via: mcp`.
+5. `/taskpack-start premiera-proof`, `/taskpack-status`, `/taskpack-add premiera-proof Nagrać film App Preview`, `/taskpack-wrap` behave as described.
+6. Claude Desktop: `pnpm taskpack mcp config claude-desktop --write --home /tmp/g`, restart, “pracujemy nad taskpack://premiera-proof, dopisz 2 todo i zakończ sesję” → todos with `by:claude`, a session note with `via: mcp`.
 7. Claude Desktop with the folder `/tmp/g` attached (and the zips from `pnpm kit:build` uploaded) → same scenario through files; run `pnpm taskpack validate --home /tmp/g` afterwards.
 8. Codex in `/tmp/g` → reads AGENTS.md, uses the CLI with `--actor codex`; with `taskpack mcp config codex --write`, the same through MCP.
 9. Cursor with `taskpack mcp config cursor --write` → tools listed in Cursor's MCP settings; a todo gets `by:cursor`.
 10. Move the workspace (`mv /tmp/g /tmp/g2`) and reopen Claude Code there: hooks and MCP still work. Rename the Taskpack repository folder: the next hook shows `Taskpack is not at … anymore` with the repair command; after `pnpm build && pnpm taskpack kit repair --home /tmp/g2` everything works again, including Claude Desktop.
 
-11. Images: “taskpack://witrynka, co jest na przypiętym rysunku wymiarów?” in Claude Code and Claude Desktop → the answer describes the drawing (180 × 80 × 38, split in the middle), i.e. the client passed the image block to the model. Then “narysuj szkic zawiasu jako SVG i dodaj do galerii, przypnij” → with 5 current images the pin is refused with the limit message; after unpinning one, the sketch appears in the open gallery with “od Claude”.
-12. Claude Code: “dodaj ~/Desktop/<photo>.jpg do witrynki jako postęp” → `attach_image` with `{path}` (or `taskpack image add`), the photo is in the gallery without EXIF in `.taskpack/agent/`.
-13. `pnpm kit:mcpb`, then open `dist/taskpack.mcpb` in Claude Desktop, pick `/tmp/g` → the Taskpack extension is listed and enabled; “pracujemy nad taskpack://witrynka, dopisz todo i zakończ sesję” writes `by:claude`. In the app, "Cofnij" on that session restores the files.
+11. Images: “taskpack://premiera-proof, co jest na przypiętej ścieżce zakupu?” in Claude Code and Claude Desktop → the answer describes the diagram (load products → paywall → purchase, pending with Ask to Buy, restore), i.e. the client passed the image block to the model. Then “narysuj szkic ekranu ustawień jako SVG i dodaj do galerii, przypnij” → with 5 current images the pin is refused with the limit message; after unpinning one, the sketch appears in the open gallery with “od Claude”.
+12. Claude Code: “dodaj ~/Desktop/<screenshot>.png do Proof jako postęp” → `attach_image` with `{path}` (or `taskpack image add`), the photo is in the gallery without EXIF in `.taskpack/agent/`.
+13. `pnpm kit:mcpb`, then open `dist/taskpack.mcpb` in Claude Desktop, pick `/tmp/g` → the Taskpack extension is listed and enabled; “pracujemy nad taskpack://premiera-proof, dopisz todo i zakończ sesję” writes `by:claude`. In the app, "Cofnij" on that session restores the files.
 
 ## Not verified
 

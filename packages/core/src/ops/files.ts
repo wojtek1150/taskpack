@@ -4,7 +4,7 @@ import { type Context, mutate, type Written } from '../workspace.js';
 import { parseInput } from './common.js';
 
 export const recordFileEditInput = z.object({
-  /** Workspace-relative path with `/` separators, e.g. `projects/witrynka/todos.md`. */
+  /** Workspace-relative path with `/` separators, e.g. `projects/proof-app/todos.md`. */
   file: z
     .string()
     .min(1)
