@@ -1,0 +1,23 @@
+{
+  "name": "@taskpack/cli",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "description": "Taskpack command line.",
+  "bin": {
+    "taskpack": "./dist/index.js",
+    "tpk": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@taskpack/core": "workspace:*",
+    "commander": "^15.0.0"
+  }
+}

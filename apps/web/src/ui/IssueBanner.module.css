@@ -1,0 +1,41 @@
+.banner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 18px;
+  border-radius: var(--r-2xl);
+  background: var(--tint-accent);
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fix {
+  margin-left: auto;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  border: 0;
+  background: var(--brown);
+  color: var(--cream);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.list code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}

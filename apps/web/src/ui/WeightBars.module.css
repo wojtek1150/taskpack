@@ -1,0 +1,21 @@
+.bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.on,
+.off {
+  width: 4px;
+  border-radius: 1px;
+}
+
+.on {
+  background: var(--accent);
+}
+
+.off {
+  background: var(--bar-off);
+}

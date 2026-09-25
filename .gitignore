@@ -1,0 +1,20 @@
+node_modules/
+dist/
+coverage/
+.taskpack/
+.env
+.env.*
+*.log
+.DS_Store
+*.tsbuildinfo
+test-results/
+playwright-report/
+.vitest/
+
+# Personal IDE / agent tooling (not part of Taskpack)
+.claude/
+.agents/
+.junie/
+.qodo/
+.idea/
+skills-lock.json

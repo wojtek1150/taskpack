@@ -1,0 +1,20 @@
+.track {
+  flex-grow: 1;
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.fill,
+.solid {
+  border-radius: inherit;
+  transition: width var(--dur-enter) var(--ease-out);
+}
+
+.fill {
+  background: var(--grad-progress);
+}
+
+.solid {
+  background: var(--accent);
+  border-radius: 0;
+}

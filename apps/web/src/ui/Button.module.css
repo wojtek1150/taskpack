@@ -1,0 +1,87 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lg {
+  height: 44px;
+  padding: 0 20px;
+  font-size: var(--fs-base);
+}
+
+.md {
+  height: 36px;
+  padding: 0 16px;
+  font-size: var(--fs-sm);
+}
+
+.sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: var(--fs-xs);
+}
+
+.primary {
+  border: 0;
+  background: var(--grad-button);
+  box-shadow: var(--shadow-button);
+  color: var(--cream);
+  font-weight: 700;
+}
+
+.primary:hover {
+  color: var(--cream);
+  filter: brightness(1.05);
+}
+
+.ghost {
+  background: transparent;
+  border-color: var(--line-3);
+  color: var(--ink);
+}
+
+.ghost:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--subtle);
+}
+
+.dark {
+  border: 0;
+  background: var(--brown);
+  color: var(--cream);
+}
+
+.dark:hover {
+  color: var(--cream);
+  background: var(--accent-hover);
+}
+
+.light {
+  border: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.light:hover {
+  color: var(--ink);
+  background: #fff;
+}
+
+.quiet {
+  background: transparent;
+  color: var(--muted);
+}
+
+.quiet:hover {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}

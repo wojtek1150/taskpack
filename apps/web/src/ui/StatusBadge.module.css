@@ -1,0 +1,20 @@
+.badge,
+.active {
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+}
+
+.badge {
+  border: 1px solid var(--line-3);
+  color: var(--ink-2);
+}
+
+.active {
+  background: var(--brown);
+  color: var(--cream);
+}

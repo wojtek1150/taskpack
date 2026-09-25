@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    // Typecheck and tests use the core sources; the build resolves the built package.
+    "paths": { "@taskpack/core": ["../core/src/index.ts"] }
+  },
+  "include": ["src", "test"]
+}

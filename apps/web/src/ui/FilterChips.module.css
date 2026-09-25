@@ -1,0 +1,46 @@
+.group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line-strong);
+}
+
+.chip:hover {
+  color: var(--ink);
+  border-color: var(--line-3);
+}
+
+.md {
+  height: 36px;
+  padding: 0 16px;
+  font-size: var(--fs-sm);
+}
+
+.sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: var(--fs-xs);
+}
+
+.ink[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: var(--ink);
+}
+
+.brown[aria-pressed="true"] {
+  background: var(--brown);
+  color: var(--cream);
+  border-color: var(--brown);
+}

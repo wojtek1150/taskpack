@@ -1,0 +1,148 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.count {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row,
+.next {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 8px 0 14px;
+  border-radius: var(--r-lg);
+  border: 1px solid transparent;
+}
+
+.next {
+  background: var(--tint-accent);
+  border-color: var(--brown);
+}
+
+.label {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 46px;
+  cursor: pointer;
+}
+
+.check {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.text,
+.done {
+  font-size: var(--fs-body);
+}
+
+.done {
+  color: var(--subtle);
+  text-decoration: line-through;
+}
+
+.marker {
+  flex-shrink: 0;
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: var(--cream);
+}
+
+.reorder {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+}
+
+.row:hover .reorder,
+.next:hover .reorder,
+.reorder:focus-within {
+  opacity: 1;
+}
+
+.reorder button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reorder button:hover:not(:disabled) {
+  background: var(--surface-sunken);
+  color: var(--ink);
+}
+
+.empty {
+  margin: 0;
+  color: var(--subtle);
+  font-size: var(--fs-sm);
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line-3);
+  color: var(--subtle);
+}
+
+.add:focus-within {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.addInput {
+  flex-grow: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--ink);
+  font-size: var(--fs-base);
+}
+
+@media (hover: none) {
+  .reorder {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,81 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: var(--r-2xl);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.card:hover {
+  color: var(--ink);
+  border-color: var(--line-3);
+}
+
+.active,
+.active:hover {
+  border-color: var(--accent);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meta {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.title {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+
+.desc {
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.done {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: var(--r-2xl);
+  background: var(--surface-column);
+  color: var(--subtle);
+  font-size: var(--fs-base);
+  text-decoration: none;
+}
+
+.done svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.done:hover {
+  color: var(--muted);
+}
+
+.doneTitle {
+  text-decoration: line-through;
+}
+
+.doneAt {
+  margin-left: auto;
+  white-space: nowrap;
+}

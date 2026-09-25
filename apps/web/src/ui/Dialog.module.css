@@ -1,0 +1,63 @@
+.dialog {
+  width: min(480px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-4xl);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-lift);
+}
+
+.dialog::backdrop {
+  background: rgba(28, 25, 23, 0.28);
+}
+
+/*
+ * Enter: scale 0.96 → 1 with opacity, 200 ms ease-out; exit is faster (140 ms). Nothing
+ * moves when the dialog was opened from the keyboard (html[data-modality="keyboard"]).
+ */
+.dialog {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 140ms var(--ease-out),
+    transform 140ms var(--ease-out),
+    overlay 140ms allow-discrete,
+    display 140ms allow-discrete;
+}
+
+.dialog:not([open]) {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.dialog[open] {
+  transition-duration: 200ms;
+}
+
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+:global(html[data-modality="keyboard"]) .dialog {
+  transition: none;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--fs-h3);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}

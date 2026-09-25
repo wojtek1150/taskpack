@@ -1,0 +1,143 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-radius: var(--r-4xl);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.counts {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 42px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.label {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 42px;
+  cursor: pointer;
+}
+
+.check {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.text,
+.done {
+  font-size: var(--fs-base);
+}
+
+.done {
+  color: var(--subtle);
+  text-decoration: line-through;
+}
+
+.agent {
+  flex-shrink: 0;
+  font-size: var(--fs-xxs);
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  background: var(--tint-mustard);
+  color: var(--mustard-ink);
+}
+
+.editButton {
+  flex-shrink: 0;
+  border: 0;
+  background: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: var(--fs-xs);
+  color: var(--subtle);
+  opacity: 0;
+}
+
+.row:hover .editButton,
+.editButton:focus-visible {
+  opacity: 1;
+}
+
+.editButton:hover {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.editInput {
+  flex-grow: 1;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line-3);
+  background: var(--bg);
+  font-size: var(--fs-base);
+}
+
+.empty {
+  margin: 0;
+  color: var(--subtle);
+  font-size: var(--fs-sm);
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line-3);
+  color: var(--subtle);
+}
+
+.add:focus-within {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.addInput {
+  flex-grow: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--ink);
+  font-size: var(--fs-base);
+}
+
+@media (hover: none) {
+  .editButton {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,51 @@
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.actions > *,
+.options > * {
+  max-width: 100%;
+  /* Long suggested answers wrap instead of overflowing the card. */
+  white-space: normal;
+  height: auto;
+  min-height: 36px;
+  padding-block: 6px;
+  text-align: left;
+}
+
+.reply {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.replyRow {
+  display: flex;
+  gap: 8px;
+}
+
+.replyRow > button {
+  flex-shrink: 0;
+}
+
+.input {
+  flex-grow: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-3);
+  background: var(--bg);
+  font-size: var(--fs-sm);
+}

@@ -1,0 +1,115 @@
+/* Taskpack design tokens, extracted from the .dc.html designs. */
+:root {
+  /* surfaces */
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-sunken: #eceae5; /* active nav, tile backgrounds, progress track */
+  --surface-column: #f1f0ec; /* board columns, done task rows */
+  --sidebar-bg: linear-gradient(180deg, #f6f4f0 0%, #f2efe9 100%);
+  --tint-accent: #fbeee8;
+  --tint-accent-2: #fdf1e8;
+  --tint-mustard: #fbf1d3;
+  --cream: #fff7e6; /* text on dark */
+
+  /* text */
+  --ink: #1c1917;
+  --ink-2: #3d3935;
+  --muted: #67615b;
+  --subtle: #77716a;
+  --faint: #b3aea7;
+
+  /* lines */
+  --line: #e7e5e0;
+  --line-soft: #eeece8;
+  --line-strong: #dcd9d3;
+  --line-3: #cfcbc4;
+  --bar-off: #e2dfd9;
+
+  /* accents */
+  --accent: #c2410c;
+  --accent-hover: #9a3412;
+  --accent-strong: #b23a0b;
+  --accent-deep: #a8360a;
+  --accent-bright: #d0501a;
+  --brown: #7c2d12;
+  --mustard: #eab308;
+  --mustard-deep: #d99a06;
+  --mustard-ink: #854d0e;
+  --amber: #d97706;
+  --ochre: #a16207;
+
+  /* gradients */
+  --grad-accent: linear-gradient(135deg, #a8360a 0%, #c2410c 55%, #cf5316 100%);
+  --grad-focus: radial-gradient(120% 150% at 100% 0%, rgba(234, 179, 8, 0.35), transparent 55%), var(--grad-accent);
+  --grad-sunset: linear-gradient(135deg, #eab308 0%, #c2410c 60%, #a8360a 100%);
+  --grad-mustard:
+    radial-gradient(120% 150% at 100% 0%, rgba(255, 255, 255, 0.4), transparent 50%),
+    linear-gradient(135deg, #f2c230 0%, #eab308 50%, #d99a06 100%);
+  --grad-card-warm: linear-gradient(135deg, #ffffff 40%, #fdf1e8 100%);
+  --grad-brown: linear-gradient(160deg, #9a3412 0%, #6b250f 100%);
+  --grad-button: linear-gradient(180deg, #d0501a 0%, #b23a0b 100%);
+  --grad-progress: linear-gradient(90deg, #c2410c, #d97706);
+  --grad-text: linear-gradient(90deg, #c2410c 0%, #d97706 100%);
+  --grad-tile-sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0.1));
+  --page-glow:
+    radial-gradient(900px 520px at 100% -8%, rgba(234, 179, 8, 0.13), transparent 62%),
+    radial-gradient(800px 480px at 55% -12%, rgba(194, 65, 12, 0.08), transparent 60%);
+
+  /* shadows */
+  --shadow-button: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 1px 2px rgba(124, 45, 18, 0.25);
+  --shadow-focus-card: 0 10px 28px -12px rgba(194, 65, 12, 0.55);
+  --shadow-summary: 0 12px 30px -16px rgba(217, 154, 6, 0.6);
+  --shadow-featured: 0 12px 32px -18px rgba(194, 65, 12, 0.45);
+  --shadow-lift: 0 18px 40px -18px rgba(28, 25, 23, 0.35);
+
+  /* typography */
+  --font-display: "Archivo", system-ui, sans-serif; /* 800/900, uppercase */
+  --font-body: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --fs-display-xxl: 96px;
+  --fs-display-xl: 56px;
+  --fs-display-l: 46px;
+  --fs-h2: 28px;
+  --fs-h3: 22px;
+  --fs-card: 20px;
+  --fs-lg: 17px;
+  --fs-md: 16px;
+  --fs-body: 15px;
+  --fs-base: 14px;
+  --fs-sm: 13px;
+  --fs-xs: 12px;
+  --fs-xxs: 11px;
+  --tracking-label: 0.14em;
+
+  /* radii */
+  --r-xs: 2px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 12px;
+  --r-xl: 14px;
+  --r-2xl: 16px;
+  --r-3xl: 18px;
+  --r-4xl: 20px;
+  --r-pill: 999px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-press: 160ms;
+  --dur-color: 150ms;
+  --dur-enter: 200ms;
+
+  /* project colours users pick from */
+  --project-1: #c2410c;
+  --project-2: #d97706;
+  --project-3: #eab308;
+  --project-4: #77716a;
+
+  --sidebar-width: 232px;
+}
+
+/* Narrow desktop (1024–1180 px): a slimmer sidebar leaves room for four columns. */
+@media (max-width: 1180px) {
+  :root {
+    --sidebar-width: 200px;
+  }
+}

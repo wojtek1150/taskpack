@@ -1,0 +1,5 @@
+# Todo
+
+- [ ] Odnowić domenę przed listopadem <!-- id:td_b1do by:user at:2026-09-10 -->
+- [ ] Dodać og:image do wpisów <!-- id:td_b2og by:claude-code at:2026-09-22T18:10:00+02:00 -->
+- [ ] Wybrać motyw kolorowania kodu <!-- id:td_b3ko by:user at:2026-09-15 -->

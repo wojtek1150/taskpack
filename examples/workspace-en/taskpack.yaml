@@ -1,0 +1,37 @@
+# Taskpack workspace settings — see .claude/skills/taskpack-workspace/reference/format.md
+version: 1
+lang: en
+git:
+  autocommit: session # session | off
+pack:
+  max_tokens: 2500
+  max_open_todos: 15
+  max_images: 5
+  max_image_kb: 700
+  session_chars: 400
+tools:
+  list_projects: true
+  get_project: true
+  get_task: true
+  get_images: true
+  search: true
+  add_todo: true
+  create_task: true
+  update_task: true
+  set_summary: true
+  log_session: true
+  attach_image: true
+  ask_user: true
+  toggle_todo: true
+clients:
+  - name: Claude Code
+    actor: claude-code
+    via: mcp
+  - name: Claude Desktop
+    actor: claude
+    via: mcp
+  - name: ChatGPT
+    actor: chatgpt
+    via: files
+    tools:
+      set_summary: false

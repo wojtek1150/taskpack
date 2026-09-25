@@ -1,0 +1,88 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  border-radius: var(--r-4xl);
+  background: var(--grad-mustard);
+  color: var(--ink);
+  box-shadow: var(--shadow-summary);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.h2 {
+  margin: 0;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.meta {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.edit {
+  border: 0;
+  padding: 0;
+  background: none;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.body {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-h3);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.labels {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: var(--fs-base);
+  line-height: 1.45;
+}
+
+.labelRow {
+  display: flex;
+  gap: 10px;
+}
+
+.labelRow dt {
+  width: 90px;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.labelRow dd {
+  margin: 0;
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form label {
+  color: var(--ink);
+}

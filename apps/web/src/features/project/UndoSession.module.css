@@ -1,0 +1,97 @@
+.button {
+  margin-left: auto;
+}
+
+.undone {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  border: 1px dashed var(--line-3);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--fs-base);
+  color: var(--ink-2);
+}
+
+.label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 10px 12px;
+  list-style: none;
+  border-radius: var(--r-lg);
+  background: var(--surface-column);
+  font-size: var(--fs-sm);
+}
+
+.files li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.files code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+
+.added,
+.modified,
+.deleted {
+  flex-shrink: 0;
+  width: 72px;
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.added {
+  color: var(--ochre);
+}
+
+.modified {
+  color: var(--muted);
+}
+
+.deleted {
+  color: var(--accent-strong);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+.warn {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--r-lg);
+  background: var(--tint-mustard);
+  color: var(--mustard-ink);
+  font-size: var(--fs-sm);
+}
+
+.error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--r-lg);
+  background: var(--tint-accent);
+  color: var(--accent-deep);
+  font-size: var(--fs-sm);
+}

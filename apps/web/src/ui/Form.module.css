@@ -1,0 +1,79 @@
+/* Shared form controls (dialogs, inline editors). */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-3);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+
+.input,
+.select {
+  height: 40px;
+  padding: 0 12px;
+}
+
+.textarea {
+  padding: 10px 12px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 84px;
+}
+
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.weights {
+  display: flex;
+  gap: 6px;
+}
+
+.weight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-3);
+  background: transparent;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.weight[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--tint-accent);
+}

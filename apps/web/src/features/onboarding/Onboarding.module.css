@@ -1,0 +1,52 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+  padding: 40px 0;
+}
+
+.eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+
+.h1 {
+  margin: 0;
+  font-size: var(--fs-display-xl);
+  line-height: 0.98;
+}
+
+.points {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  font-size: var(--fs-md);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.hint {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--r-2xl);
+  border: 1px dashed var(--line-3);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+.hint p {
+  margin: 0;
+}
